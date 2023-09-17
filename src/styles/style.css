@@ -1,0 +1,388 @@
+:root {
+  --primary-color: #0079BF; /* Задаем цвет как переменную */
+}
+
+#app-login-btn {
+  width: 160px;
+}
+.bg-light {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.app-header, .app-footer{
+  position: absolute;
+  min-width: 100vw;
+  background-color: #0067A3;
+  color: white;
+  z-index: 2;
+}
+.app-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  min-height: 55px;
+  top: 0;
+  left: 0;
+
+}
+.app-logo {
+  width: 384px;
+  height: 45px;
+  top: 5px;
+  left: 14px;
+  position: absolute;
+}
+
+.app-logo-text {
+  width: 331px;
+  height: 26px;
+  top: 10px;
+  left: 6px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 33px;
+  letter-spacing: 0em;
+  text-align: left;
+  padding-left: 14px; 
+  position: absolute;
+}
+
+.app-logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.app-footer{
+  min-height: 55px;
+  bottom: 0;
+  left: 0;
+  padding-top: 0.75rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+.app-footer-container {
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.app-kanban__board {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  position: absolute;
+  width: 100%; 
+  height: 100%; 
+  top: 55px;
+  left: 0;
+  z-index: 1;
+  background-color: var(--primary-color); /* Используем CSS-переменную для цвета */
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+  overflow: hidden; 
+}
+
+
+.app-container-backlog, .app-container-ready, .app-container-progress, .app-container-finished {
+  display: block;
+  width: 22vw;
+  min-height: 25vh;
+  background-color: #EBECF0;
+  border-radius: 10px;
+  margin: 12px;
+  padding: 10px 0 10px 10px;
+  max-height: 82vh;
+}
+.app-container-backlog::before{
+  content: 'Backlog';
+  display: block;
+  height: 17px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+}
+.app-container-ready::before{
+  content: 'Ready';
+  display: block;
+  height: 17px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+}
+.app-container-progress::before{
+  content: 'In progress';
+  display: block;
+  height: 17px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+}
+.app-container-finished::before{
+  content: 'Finished';
+  display: block;
+  height: 17px;
+}
+.app-backlog-items, .app-ready-items, .app-progress-items, .app-finished-items{
+  margin-top: 12px;
+  min-height: 23vh;
+  max-height: 69vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.app-backlog-items::-webkit-scrollbar,.app-ready-items::-webkit-scrollbar,.app-progress-items::-webkit-scrollbar,.app-finished-items::-webkit-scrollbar {
+  width: 10px;
+}
+.app-backlog-items::-webkit-scrollbar-track,.app-ready-items::-webkit-scrollbar-track,.app-progress-items::-webkit-scrollbar-track,.app-finished-items::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 5px;
+}
+.app-backlog-items::-webkit-scrollbar-thumb,.app-ready-items::-webkit-scrollbar-thumb,.app-progress-items::-webkit-scrollbar-thumb,.app-finished-items::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background: #CBCBCB;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+.app-backlog-items::-webkit-scrollbar-thumb:window-inactive,.app-ready-items::-webkit-scrollbar-thumb:window-inactive,.app-progress-items::-webkit-scrollbar-thumb:window-inactive,.app-finished-items::-webkit-scrollbar-thumb:window-inactive {
+  background: #CBCBCB;
+}
+.app-backlog-items::-webkit-scrollbar-thumb:hover,.app-ready-items::-webkit-scrollbar-thumb:hover,.app-progress-items::-webkit-scrollbar-thumb:hover,.app-finished-items::-webkit-scrollbar-thumb:hover {
+  background: #CBCBCB;
+}
+.app-list__backlog,.app-list__ready, .app-list__in-progress, .app-list__finished{
+  display: contents;
+  list-style: none;
+  list-style-position: inside;
+}
+.app-list__backlog>li,.app-list__ready>li, .app-list__in-progress>li, .app-list__finished>li {
+  display: block;
+  padding: 0 2px;
+  margin: 2px 0;
+  width: 98%;
+  background-color: white;
+  border: 0 solid transparent;
+  border-radius: 5px;
+  font-size: 1em;
+  margin: 12px 0;
+  word-wrap: break-word;
+}
+.app-list__backlog>li:last-of-type {
+  background-color: transparent;
+}
+.append-button{
+  display: block;
+  position: relative;
+  bottom: 0;
+  left: 10px;
+  border: 0 solid transparent;
+  border-radius: 5px;
+  background-color: transparent;
+  color: #5E6C84;
+}
+.append-button:not([disabled]):hover, .append-button:not([disabled]):focus{
+  cursor: pointer;
+  background-color: white;
+  color: #5E6C84;
+}
+.append-button[disabled]{
+  background-color: #dddddd;
+  color: white;
+}
+.aappend-button[disabled]:hover, .append-button[disabled]:focus{
+  cursor: not-allowed;
+}
+
+/* Стиль для кнопки отправки */
+.submit-button {
+  display: none;
+  border: 0;
+  border-radius: 5px;
+  color: white;
+  background-color: var(--primary-color); /* Использование CSS-переменной для цвета */
+}
+
+.app-usermenu {
+  position: relative;
+  width: 85px;
+  height: 56px;
+  display: inline-block;
+  z-index: 3;
+}
+
+
+
+.app-usermenu .app-menu__popup {
+  visibility: hidden;
+  width: 120px;
+  top: 100%;
+  left: 50%;
+  margin-left: -80px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text */
+  position: absolute;
+  z-index: 4;
+
+  /* Fade in tooltip */
+  opacity: 0;
+  transition: opacity 0.9s;
+}
+
+/* Tooltip arrow */
+.app-usermenu .app-menu__popup::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;  /* At the top of the tooltip */
+  left: 70%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent white transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.app-usermenu[active] .app-menu__popup {
+  visibility: visible;
+  opacity: 1;
+}
+
+.app-user_avatar {
+  display: block;
+   background-image: url("../img/useravatar.svg");
+  float: left;
+  height: 40px;
+  width: 40px;
+  position: relative;
+  margin-top: 8px;
+}
+
+.app-user_arrow{
+  display: block;
+  float: left;
+  width: 12px;
+  height: 8px;
+  position: relative;
+  margin: 24px 24px 24px 6px;
+  top: 0;
+  left: 0;
+  background-image: url("../img/userarrow.svg");
+}
+
+.app-task-title_input{
+  display: none;
+  width: 100%;
+  height: 35px;
+  border: 0 solid transparent;
+  border-radius: 5px;
+  font-size: 1em;
+  margin: 12px 0;
+}
+.app-task-title_input:focus{
+  outline: none;
+}
+.app-task-title_input::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black;
+  opacity: 1; /* Firefox */
+}
+.app-task-title_input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: black;
+}
+.app-task-title_input::-ms-input-placeholder { /* Microsoft Edge */
+  color: black;
+}
+
+
+
+/*the container must be positioned relative:*/
+.app-select__list {
+  position: relative;
+  font-family: Roboto;
+}
+.app-select__list .app-selection-marker {
+  display: none; /*hide original SELECT element:*/
+}
+.select-selected {
+  background-color: white;
+  border-radius: 5px;
+}
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: url("data:image/svg+xml,%3Csvg width='20' height='14' viewBox='0 0 20 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 0.5L11 13L19 0.5' stroke='black'/%3E%3C/svg%3E");
+  right: 28px;
+  width: 0;
+  height: 0;
+}
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent white transparent;
+  top: 7px;
+}
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: black;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-color: transparent transparent #DEDEDE transparent;
+  cursor: pointer;
+  user-select: none;
+}
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: white;
+  border-radius: 5px;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+.select-items div:hover, .same-as-selected {
+  background-color: #DEDEDE;
+}
+
+.app-select__list > .select-selected {
+  display: none;
+}
+.app-menu__popup> h5 {
+  cursor:pointer;
+  border: 1px solid transparent;
+}
+.app-menu__popup> h5:hover {
+  cursor:pointer;
+  border: 1px solid black;
+}
+
+@media only screen and (max-width:654px){
+  .bg-light {
+    overflow-y: auto;
+  }
+  .app-kanban__board {
+    overflow-y: auto;
+  }
+ 
+  .app-footer{
+    display: none;
+  }
+  .app-kanban__board{
+    flex-direction: column;
+  }
+  .app-container-backlog, .app-container-ready, .app-container-progress, .app-container-finished {
+    width: 96vw;
+    max-height: inherit;
+  }
+}
+
+.draggable {
+  cursor: grab;
+  user-select: none;
+}
+
+.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
