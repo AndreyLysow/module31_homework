@@ -9,7 +9,11 @@ module.exports = {
     path: path.resolve(__dirname, "public"),
   },
   devServer: {
+<<<<<<< HEAD
     port: 3005,
+=======
+    port: 3000,
+>>>>>>> origin/main
   },
   plugins: [
     new HTMLPlugin({
@@ -35,6 +39,7 @@ module.exports = {
         ],
       },
       {
+<<<<<<< HEAD
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
@@ -47,6 +52,10 @@ module.exports = {
       {
         test: /\.svg$/, // Добавлено правило для SVG-файлов
         use: "svg-url-loader", // svg-url-loader для обработки SVG-файлов
+=======
+        test: /\.svg$/, // Добавлено правило для SVG-файлов
+        use: "svg-url-loader", //  svg-url-loader для обработки SVG-файлов
+>>>>>>> origin/main
       },
     ],
   },
