@@ -375,7 +375,6 @@
     width: 96vw;
     max-height: inherit;
   }
-<<<<<<< HEAD
 }
 
 .draggable {
@@ -386,6 +385,4 @@
 .dragging {
   opacity: 0.5;
   cursor: grabbing;
-=======
->>>>>>> origin/main
 }

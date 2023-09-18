@@ -9,11 +9,7 @@ module.exports = {
     path: path.resolve(__dirname, "public"),
   },
   devServer: {
-<<<<<<< HEAD
     port: 3005,
-=======
-    port: 3000,
->>>>>>> origin/main
   },
   plugins: [
     new HTMLPlugin({
@@ -24,7 +20,17 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.css$/i,
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+          },
+        },
+      },
+      {
+        test: /\.css$/,
         use: ["style-loader", "css-loader"],
       },
       {
@@ -39,24 +45,10 @@ module.exports = {
         ],
       },
       {
-<<<<<<< HEAD
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      },
-      {
-        test: /\.svg$/, // Добавлено правило для SVG-файлов
-        use: "svg-url-loader", // svg-url-loader для обработки SVG-файлов
-=======
-        test: /\.svg$/, // Добавлено правило для SVG-файлов
-        use: "svg-url-loader", //  svg-url-loader для обработки SVG-файлов
->>>>>>> origin/main
+        test: /\.svg$/,
+        use: "svg-url-loader",
       },
     ],
   },
 };
+
