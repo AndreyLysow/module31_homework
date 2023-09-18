@@ -5,7 +5,7 @@ import "./styles/style.css";
 import taskFieldTemplate from "./templates/taskField.html";
 import noAccessTemplate from "./templates/noAccess.html";
 import { User } from "./models/User";
-import { State } from "./state";
+import { State } from "./State";
 import { authUser } from './services/auth';
 import { Tasks } from "./models/Tasks";
 import { initDragAndDrop } from "./models/dragAndDrop";
@@ -14,7 +14,6 @@ import {
   getFromStorage,
   addToStorage,
 } from "./utils.js";
-
 
 class App {
   constructor() {
@@ -31,7 +30,6 @@ class App {
     this.appState.currentUser = user;
   }
 
-
   async initializeApp() {
     await this.appState.fetchUser();
     this.setupLoginForm();
@@ -41,29 +39,33 @@ class App {
       this.initDragAndDrop();
       this.taskInputField = document.querySelector('.app-task-title_input');
       this.backlogList = document.querySelector('.app-list__backlog');
+      this.backlogAddBtn = document.querySelector('.app-container-backlog .append-button');
+      this.backlogSbmt = document.querySelector('.app-container-backlog .submit-button');
       this.setupEventHandlers();
     }
   }
 
   setupLoginForm() {
-      const loginForm = document.querySelector("#app-login-form");
-      loginForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const formData = new FormData(loginForm);
-        const login = formData.get("login");
-        const password = formData.get("password");
-    
-      const fieldHTMLContent = authUser(login, password, this.appState)
-      ? taskFieldTemplate
-      : noAccessTemplate;
-    
+    const loginForm = document.querySelector("#app-login-form");
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(loginForm);
+      const login = formData.get("login");
+      const password = formData.get("password");
+
+      const fieldHTMLContent = await authUser(login, password, this.appState)
+        ? taskFieldTemplate
+        : noAccessTemplate;
+
       document.querySelector("#content").innerHTML = fieldHTMLContent;
-    
 
       if (fieldHTMLContent !== '<h1>Sorry, you\'ve no access to this resource!</h1>') {
+        // Вызывайте здесь необходимые действия для инициализации интерфейса
         this.initDragAndDrop();
         this.taskInputField = document.querySelector('.app-task-title_input');
         this.backlogList = document.querySelector('.app-list__backlog');
+        this.backlogAddBtn = document.querySelector('.app-container-backlog .append-button');
+        this.backlogSbmt = document.querySelector('.app-container-backlog .submit-button');
         this.setupEventHandlers();
       }
     });
@@ -116,12 +118,12 @@ class App {
       { selector: '.app-container-progress > .append-button', handler: () => this.startNewInProgressTask() },
       { selector: '.app-container-finished > .append-button', handler: () => this.startNewFinishedTask() },
     ];
-  
+
     buttons.forEach(({ selector, handler }) => {
       const button = document.querySelector(selector);
       button.addEventListener('click', handler);
     });
-  
+
     this.taskInputField.addEventListener('keypress', (event) => {
       if (event.key === 'Enter') {
         event.preventDefault();
@@ -129,7 +131,7 @@ class App {
       }
     });
   }
-  
+
   startNewBacklogTask() {
     this.taskInputField.style.display = 'block';
     this.backlogSbmt.style.display = 'block';
@@ -190,7 +192,10 @@ class App {
   }
 }
 
-const app = new App();
-app.initializeApp();
+document.addEventListener('DOMContentLoaded', function () {
+  const app = new App();
+  app.initializeApp();
+});
 
-export { app as appInstance };
+
+export default appInstance;

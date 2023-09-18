@@ -3,12 +3,16 @@ export class State {
     this.currentUser = null;
   }
 
+  get currentUser() {
+    return this._currentUser;
+  }
+  
   set currentUser(user) {
     this._currentUser = user;
   }
 
-  get currentUser() {
-    return this._currentUser;
+  setCurrentUser(user) {
+    this.currentUser = user;
   }
 
   async fetchUser() {
