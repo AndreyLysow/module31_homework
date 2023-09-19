@@ -8,21 +8,31 @@ export class User extends BaseModel {
     this.password = password;
     this.storageKey = "users";
   }
-  get hasAccess() {
-    let users = getFromStorage(this.storageKey);
-    if (users.length == 0) return false;
-    for (let user of users) {
-      if (user.login == this.login && user.password == this.password)
-        return true;
-    }
-    return false;
-  }
-  static save(user) {
+
+  async hasAccess() {
     try {
-      addToStorage(user, user.storageKey);
+      const users = await getFromStorage(this.storageKey);
+      if (users.length === 0) return false;
+      for (const user of users) {
+        if (user.login === this.login && user.password === this.password) {
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking access:", error);
+      return false;
+    }
+  }
+
+  static async save(user) {
+    try {
+      await addToStorage(user, user.storageKey);
       return true;
     } catch (e) {
       throw new Error(e);
     }
   }
 }
+
+
