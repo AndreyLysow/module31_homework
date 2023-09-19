@@ -146,8 +146,9 @@ class App {
       return;
     }
 
-    const newTaskAsListElement = document.createElement('li');
+    const newTaskAsListElement = document.createElement('div');
     newTaskAsListElement.textContent = text;
+    newTaskAsListElement.className = 'draggable'; 
     newTaskAsListElement.setAttribute('draggable', 'true');
 
     newTaskAsListElement.addEventListener('dragstart', (e) => {
