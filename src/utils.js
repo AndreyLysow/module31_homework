@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
-import { logout } from "./services/auth";
+import { logout, generateUser  } from "./services/auth";
 
 
 export const getFromStorage = function (key) {
@@ -90,11 +90,52 @@ export function adminUserBtn() {
   if (adminButton) {
   adminButton.addEventListener("click", function () {
     adminPage.style.display = "block";
+    showUserList();
+    addNewUser();
   });
 }
 }
 
+function showUserList () {
+  const usersList = document.querySelector('.users-list');
+  const users = getFromStorage('users');
+  usersList.innerHTML = '';
+  let user;
+  for (let i =  0; i < users.length; i++) {
+    user = document.createElement('p');
+    user.className = 'user-list-item'
+    user.innerText = `${i + 1}. Login: ${users[i].login}, Password: ${users[i].password}, Role: ${users[i].role}`
+    usersList.appendChild(user);
+  }
+}
 
+function  addNewUser () {
+  const addUserForm = document.querySelector('#new-user-form');
+  addUserForm.addEventListener("submit", listener);
+  function listener(e) {
+    e.preventDefault();
+    const formData = new FormData(addUserForm);
+    const userData = {name: formData.get("login"), password: formData.get("password"), role: formData.get("role")};
+    generateUser(User, userData);
+    addUserForm.childNodes[1].value = '';
+    addUserForm.childNodes[3].value = '';
+    addUserForm.childNodes[5].options[0].selected = "selected";
+    showUserList();
+  }
+}
+
+
+export function updateElementDisplay(element, display) {
+  element.style.display = display;
+}
+
+export function toggleElementDisplay(element, display) {
+  if (element.style.display === display) {
+    element.style.display = 'none';
+  } else {
+    element.style.display = display;
+  }
+}
 
 
 //удаление таска
@@ -143,14 +184,3 @@ export function adminUserBtn() {
 // });
 
 
-export function updateElementDisplay(element, display) {
-  element.style.display = display;
-}
-
-export function toggleElementDisplay(element, display) {
-  if (element.style.display === display) {
-    element.style.display = 'none';
-  } else {
-    element.style.display = display;
-  }
-}

@@ -14,12 +14,12 @@ export const authUser = function (login, password) {
 export const generateUsers = function(User) {
   localStorage.clear();
   const adminUser = {name: "admin", password: "qwerty123", role: "admin"};
-  generarteUser(User, adminUser);
+  generateUser(User, adminUser);
   const testUser = {name: "test", password: "123"};
-  generarteUser(User, testUser);
+  generateUser(User, testUser);
 };
 
-const generarteUser = function (User, userData) {
+export const generateUser = function (User, userData) {
   const user = new User(userData.name, userData.password, userData.role || "user");
   User.save(user);
 };

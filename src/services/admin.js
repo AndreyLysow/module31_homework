@@ -84,7 +84,7 @@ export const renderAdminMenuItems = function () {
       e.preventDefault();
       const formData = new FormData(addUserForm);
       const userData = { name: formData.get("login"), password: formData.get("password"), role: formData.get("role") };
-      generarteUser(User, userData);
+      generateUser(User, userData);
       addUserForm.childNodes[1].value = '';
       addUserForm.childNodes[3].value = '';
       addUserForm.childNodes[5].options[0].selected = "selected";
@@ -92,7 +92,7 @@ export const renderAdminMenuItems = function () {
     }
   };
   
-  export const generarteUser = function (User, userData) {
+  export const generateUser = function (User, userData) {
     const user = new User(userData.name, userData.password, userData.role || "user");
     User.save(user);
   };
