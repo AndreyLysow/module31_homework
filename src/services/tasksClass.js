@@ -1,7 +1,5 @@
-
-
 export class Tasks {
-    constructor(login, taskString = null) {
+    constructor(taskString = null, login) {
       this.backlogTasks = taskString;
       this.readyTasks = taskString;
       this.inProgressTasks = taskString;
@@ -33,7 +31,6 @@ export class Tasks {
         this.removeFromBacklog(textString);
         redrawSelect('.app-ready-items');
         redrawSelect('.app-progress-items');
-        // todo: real recalculate backlog content & if zero - then disble its own (ready) button
         (document.querySelector('.app-ready-tasks-counter')).innerHTML=this.backlogTasks.length;
       };
       this.writeInProgress = function (textString) {
@@ -49,7 +46,6 @@ export class Tasks {
         this.removeFromReady(textString);
         redrawSelect('.app-progress-items');
         redrawSelect('.app-finished-items');
-        // todo: real recalculate Ready content & if zero - then disble its own (ready) button
       };
       this.writeFinished = function (textString) {
         this.finishedTasks = JSON.parse(localStorage.getItem(this.userid + '-tasks-finished') || "[]");
@@ -62,7 +58,6 @@ export class Tasks {
         finishedItemCandidates.appendChild(finishedItemCandidateNewOpt);
         this.removeFromInProgress(textString);
         redrawSelect('.app-finished-items');
-        // todo: real recalculate Ready content & if zero - then disble its own (ready) button
         (document.querySelector('.app-finished-tasks-counter')).innerHTML=(this.finishedTasks).length;
       };
       this.removeFromBacklog = function (textString) {
@@ -87,7 +82,6 @@ export class Tasks {
         this.inProgressTasks = JSON.parse(localStorage.getItem(this.userid + '-tasks-in-progress') || "[]");
         this.finishedTasks = JSON.parse(localStorage.getItem(this.userid + '-tasks-finished') || "[]");
 
-        // todo: create lists from this data.
       };
     }
   }
@@ -137,7 +131,7 @@ export class Tasks {
       });
     }
   }
-
+  
   export function closeAllSelect(elmnt) {
     const x = document.getElementsByClassName('select-items');
     const y = document.getElementsByClassName('select-selected');
@@ -150,3 +144,4 @@ export class Tasks {
       }
     }
   }
+  

@@ -1,17 +1,11 @@
 export class State {
   constructor() {
-    this._currentUser = null;
+    this.currentUser = null;
   }
-
-  get currentUser() {
-    return this._currentUser;
-  }
-
   set currentUser(user) {
     this._currentUser = user;
   }
-
-  setCurrentUser(user) {
-    this.currentUser = user;
+  get currentUser() {
+    return this._currentUser;
   }
 }

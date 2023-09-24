@@ -1,0 +1,74 @@
+<div class="app-header">
+    <div class="app-logo-container">
+      <h1 class="app-logo app-logo-text">Awesome Kanban Board</h1>
+    </div>
+    <h2 class="app-logo-text welcome">Текст</h2>
+ <div class="app-usermenu">
+    <div class="app-user_avatar"></div>
+    <div class="app-user_arrow"></div>
+    <span class="app-menu__popup">
+      <li>Profile</li>
+      <li id="app-logout-btn">Log Out</li>
+    </span>
+  </div>
+</div>
+
+<div class="app-kanban__board">
+<div class="app-container-backlog">
+    <div class="app-backlog-items task-list">
+           <!-- Блок для списка задач в беклоге -->     
+        <ul class="app-list__backlog">
+            <li>
+                <input type="text" placeholder="Define the task" class="app-task-title_input" />
+            </li>
+        </ul>
+    </div>
+         <!-- Блок для кнопок -->
+    <button type="button" class="append-button">+&nbsp;Add card</button>
+    <button type="button" class="submit-button">Submit</button>
+</div>
+
+
+<div class="app-container-ready">
+    <div class="app-ready-items task-list">
+        <ul class="app-list__ready"></ul>
+        <div class="app-select__list">
+            <select class="app-selection-marker" ></select>
+        </div>
+    </div>
+      <!-- Блок для кнопок -->
+    <button type="button" class="append-button" disabled>+&nbsp;Add card</button>
+    <button type="button" class="submit-button">Submit</button>
+</div>
+
+<div class="app-container-progress">
+    <div class="app-progress-items task-list">
+        <ul class="app-list__in-progress"></ul>
+        <div class="app-select__list">
+            <select class="app-selection-marker" ></select>
+        </div>
+    </div>
+      <!-- Блок для кнопок -->
+    <button type="button" class="append-button" disabled>+&nbsp;Add card</button>
+    <button type="button" class="submit-button">Submit</button>
+</div>
+
+<div class="app-container-finished">
+    <div class="app-finished-items task-list">
+        <ul class="app-list__finished"></ul>
+        <div class="app-select__list">
+            <select class="app-selection-marker" ></select>
+        </div>
+    </div>
+      <!-- Блок для кнопок -->
+    <button type="button" class="append-button" disabled>+&nbsp;Add card</button>
+    <button type="button" class="submit-button">Submit</button>
+</div>
+</div>
+
+<div class="app-footer">
+<h1 class="app-footer-container">
+    <span>Active&nbsp;tasks: <span class="app-ready-tasks-counter">&lt;N&gt;</span>
+    Finished&nbsp;tasks: <span class="app-finished-tasks-counter">&lt;N&gt;</span></span>
+    <span>Kanban&nbsp;board&nbsp;by: Andrey&nbsp;Lysow, 2023</span></h1>
+</div>

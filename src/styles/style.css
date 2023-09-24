@@ -12,6 +12,7 @@
 .app-header, .app-footer{
   position: absolute;
   min-width: 100vw;
+  align-items: center; 
   background-color: #0067A3;
   color: white;
   z-index: 2;
@@ -20,18 +21,37 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   min-height: 55px;
   top: 0;
   left: 0;
-
+  padding: 0 15px; /* Добавляем отступы слева и справа */
+  background-color: #0067A3;
+  color: white;
+  z-index: 2;
 }
+
+
 .app-logo {
   width: 384px;
   height: 45px;
-  top: 5px;
-  left: 14px;
-  position: absolute;
+  font-family: 'Roboto', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 33px;
+  letter-spacing: 0em;
+  text-align: left;
+  padding-left: 14px;
+  position: relative;
 }
+
+
+  .welcome {
+    font-size: 12px;
+    margin-left: 10px; 
+    align-self: center; 
+  }
+  
 
 .app-logo-text {
   width: 331px;
@@ -45,7 +65,8 @@
   letter-spacing: 0em;
   text-align: left;
   padding-left: 14px; 
-  position: absolute;
+  position: relative;
+  top: auto;
 }
 
 .app-logo-container {
@@ -348,11 +369,11 @@
 .app-select__list > .select-selected {
   display: none;
 }
-.app-menu__popup> h5 {
+.app-menu__popup> li {
   cursor:pointer;
   border: 1px solid transparent;
 }
-.app-menu__popup> h5:hover {
+.app-menu__popup> li:hover {
   cursor:pointer;
   border: 1px solid black;
 }
@@ -385,4 +406,8 @@
 .dragging {
   opacity: 0.5;
   cursor: grabbing;
+}
+
+li {
+  list-style-type: none;
 }
