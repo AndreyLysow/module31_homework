@@ -4,10 +4,13 @@
     </div>
     <h2 class="app-logo-text welcome">Текст</h2>
  <div class="app-usermenu">
+   
     <div class="app-user_avatar"></div>
     <div class="app-user_arrow"></div>
     <span class="app-menu__popup">
       <li>Profile</li>
+      <li id="app-User-Management">User Management</li>
+      <li id="app-User-kanban">View user kanban</li>
       <li id="app-logout-btn">Log Out</li>
     </span>
   </div>
@@ -65,6 +68,31 @@
     <button type="button" class="submit-button">Submit</button>
 </div>
 </div>
+
+<div id="adminPage" class="admin-page">
+    <div class="admin-content">
+        <h3 class="page-title">Add new users</h3>
+        <section class="user-adding-section">
+            <form class="new-user-form" id="new-user-form">
+                <input class="form-control me-2" name="login" autocomplete="username" type="text" placeholder="Login"
+                    aria-label="Login" required>
+                <input class="form-control me-2" name="password" autocomplete="current-password" type="text"
+                    placeholder="Password" aria-label="Password" required>
+                <select class="form-control me-2" name="role">
+                    <option value="" selected="selected">Select one of the roles for a new user</option>
+                    <option value="user">User</option>
+                    <option value="admin">Administartor</option>
+                </select>
+                <button class="btn btn-light" id="new-user-btn" type="submit">Save</button>
+            </form>
+            <div class="users-list"></div>
+        </section>
+      <h2>Admin Page</h2>
+      <p>Содержимое административной страницы.</p>
+    </div>
+    <span id="closeAdminPage" class="close-admin-page">×</span>
+  </div>
+
 
 <div class="app-footer">
 <h1 class="app-footer-container">

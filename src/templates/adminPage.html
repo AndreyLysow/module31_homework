@@ -1,0 +1,27 @@
+<div id="adminPage" class="admin-page">
+    <div class="admin-content">
+        <h3 class="page-title">Add new users</h3>
+        <section class="user-adding-section">
+            <form class="new-user-form" id="new-user-form">
+                <input class="form-control me-2" name="login" autocomplete="username" type="text" placeholder="Login"
+                    aria-label="Login" required>
+                <input class="form-control me-2" name="password" autocomplete="current-password" type="text"
+                    placeholder="Password" aria-label="Password" required>
+                <select class="form-control me-2" name="role">
+                    <option value="" selected="selected">Select one of the roles for a new user</option>
+                    <option value="user">User</option>
+                    <option value="admin">Administartor</option>
+                </select>
+                <button class="btn btn-light" id="new-user-btn" type="submit">Save</button>
+            </form>
+            <div class="users-list"></div>
+        </section>
+      <h2>Admin Page</h2>
+      <p>Содержимое административной страницы.</p>
+    </div>
+    <span id="closeAdminPage" class="close-admin-page">×</span>
+  </div>
+
+
+
+

@@ -1,8 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import "./styles/style.css";
-import adminTaskFieldTemplate from "./templates/adminTaskField.html";
-import userTaskFieldTemplate from "./templates/userTaskField.html";
+import taskFieldTemplate from "./templates/taskField.html";
 import noAccessTemplate from "./templates/noAccess.html";
 import { User } from "./models/User";
 import { State } from "./state";
@@ -15,6 +14,7 @@ import {
   updateElementDisplay,
   toggleElementDisplay,
   logOutBtn,
+  adminUserBtn,
 } from "./utils";
 let fieldHTMLContent;
 export const appState = new State();
@@ -32,17 +32,14 @@ loginForm.addEventListener("submit", function (e) {
   const password = formData.get("password");
  
   const user = authUser(login, password); // Вызываем функцию authUser
+
   if (user === false) {
     fieldHTMLContent = noAccessTemplate;
- 
-  }
-    
-  if (user) {
-    if (user === "admin") {
-      fieldHTMLContent = adminTaskFieldTemplate;
-    } else if (user === "user")  {
-      fieldHTMLContent = userTaskFieldTemplate;
     }
+  if (user) {
+    if (user === "admin" || user === "user") {
+      fieldHTMLContent = taskFieldTemplate;
+    };
   }
   document.querySelector("#content").innerHTML = fieldHTMLContent;
   if (!(fieldHTMLContent === '<h1>Sorry, you\'ve no access to this resource!</h1>')) {
@@ -65,6 +62,8 @@ loginForm.addEventListener("submit", function (e) {
     const userMenuToggle = document.querySelector('.app-usermenu');
     const userMenu = document.querySelector('.app-menu__popup');
     const welcome = document.querySelector(".welcome");
+    const adminButton = document.getElementById("app-User-Management");
+    const adminButton2 = document.getElementById("app-User-kanban");
     let myTasks;
 
     icon.setAttribute('href', './img/notepad.svg');
@@ -72,7 +71,7 @@ loginForm.addEventListener("submit", function (e) {
     myTasks = new Tasks(login);
     document.querySelector('.app-ready-tasks-counter').innerHTML = '0';
     document.querySelector('.app-finished-tasks-counter').innerHTML = '0';
-    welcome.textContent = `Welcome ${user}, ${login}!`;
+    welcome.textContent = `Welcome ${user}: ${login}!`;
     userMenuToggle.addEventListener('click', function () {
       if (userMenu.style.visibility != 'visible') {
         userMenu.style.visibility = 'visible';
@@ -84,7 +83,10 @@ loginForm.addEventListener("submit", function (e) {
         userMenu.style.opacity = 0;
       }
     });
-
+    if (user === "user") {
+      adminButton.style.display = "none";
+      adminButton2.style.display = "none";
+    }
     backlogAddBtn.addEventListener('click', function () {
       startNewBacklogTask(backlogAddBtn, backlogSbmt, taskInputField);
     });
@@ -117,6 +119,8 @@ loginForm.addEventListener("submit", function (e) {
     });
     document.addEventListener('click', closeAllSelect);
   }
+  
+  adminUserBtn();
 
   logOutBtn();
 

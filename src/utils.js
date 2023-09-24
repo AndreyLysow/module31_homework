@@ -1,3 +1,5 @@
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.min.js";
 import { logout } from "./services/auth";
 
 
@@ -70,6 +72,29 @@ export function logOutBtn() {
     });
   }
 }
+
+export function adminUserBtn() {
+  console.log("выполняется функция");
+  const adminButton = document.getElementById("app-User-Management");
+  const adminPage = document.querySelector('.admin-page');
+  const adminPageElement = document.getElementById("adminPage");
+  const closeAdminPageButton = document.querySelector(".admin-page > .close-admin-page");
+
+   if (closeAdminPageButton) {
+    closeAdminPageButton.addEventListener("click", function () {
+    adminPageElement.style.display = "none";
+  });
+}
+
+  // Назначьте обработчик события на кнопку администратора
+  if (adminButton) {
+  adminButton.addEventListener("click", function () {
+    adminPage.style.display = "block";
+  });
+}
+}
+
+
 
 
 //удаление таска
