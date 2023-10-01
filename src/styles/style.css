@@ -196,6 +196,8 @@
   background-color: transparent;
   color: #5E6C84;
 }
+
+
 .append-button:not([disabled]):hover, .append-button:not([disabled]):focus{
   cursor: pointer;
   background-color: white;
@@ -427,7 +429,7 @@ li {
 }
 
 .admin-content {
-  background-color: #fff;
+  background-color:#0079bf;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -439,8 +441,8 @@ li {
   top: 10px;
   right: 10px;
   cursor: pointer;
-  font-size: 24px;
-  color: #333;
+  font-size: 30px;
+  color: rgb(230, 230, 230);
 }
 
 .new-user-form * {
@@ -458,4 +460,100 @@ li {
 
 .app-login-btn:hover, #new-user-btn:hover {
   background-color: rgb(197, 197, 197);
+}
+
+.new-user-form * {
+  margin: 15px 0;
+  max-width: 400px;
+
+}
+
+.users-list {
+  margin: 15px 0 0;
+  padding: 5px;
+  background-color: #EBECF0;
+  border-radius: 5px;
+  max-height: 300px; 
+  overflow-y: auto; 
+}
+
+.user-list-item {
+  margin: 10px;
+  padding: 3px;
+  border-radius: 3px;
+  background-color: rgba(255, 255, 255, 0.7);
+ 
+  max-height: 100px; 
+  overflow-y: auto;
+}
+
+.page-title {
+  color: #ffffff;
+}
+
+/* Стили для кнопки "Удалить" */
+.delete-user-button {
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: 10px;
+}
+
+.delete-local-storage {
+  background-color: #ff6b6b;
+  color: #fff;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 3px;
+  margin-left: 10px;
+}
+
+/* Медиазапрос для ширины экрана 400px и менее */
+@media screen and (max-width: 400px) {
+  /* Убираем логотип из заголовка */
+  .app-logo-container {
+      display: none;
+  }
+
+  /* Вертикальное расположение контейнеров задач */
+  .app-kanban__board {
+      flex-direction: column;
+      align-items: center; /* Выравнивание по центру */
+  }
+
+  /* Скрытие футера */
+  .app-footer {
+      display: none;
+  }
+
+
+  /* Уменьшение размера шрифта при коллапсе */
+  .collapse-text {
+    font-size: 0.5rem;
+  }
+
+  /* Добавляем отступ снизу для кнопок "Add" */
+  .append-button {
+    margin-bottom: 10px;
+  }
+
+  /* Центрирование контейнеров задач по центру экрана */
+  .app-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Центрирование контейнеров по горизонтали */
+    gap: 20px; /* Расстояние между контейнерами */
+  }
+
+  .app-container-backlog,
+  .app-container-ready,
+  .app-container-progress,
+  .app-container-finished {
+    width: calc(80% - 20px); /* 80% ширины экрана с учетом расстояния между контейнерами */
+    min-height: calc(50vh - 20px); /* Половина высоты экрана с учетом расстояния между контейнерами */
+  }
 }

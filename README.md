@@ -10,10 +10,6 @@
 * HTML
 * CSS
 
-# ЗАДАНИЕ 31
-
-npm 
-=======
 # ЗАДАНИЕ 19.5.4 (HW-04)
 
 
@@ -28,3 +24,4 @@ npm
 
 
 © [Andrey Lysov](https://github.com/AndreyLysow), 2023
+# HW31-SF-V4

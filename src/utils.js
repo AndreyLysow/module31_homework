@@ -1,6 +1,7 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 import { logout, generateUser  } from "./services/auth";
+import { User } from "./models/User";
 
 
 export const getFromStorage = function (key) {
@@ -12,6 +13,37 @@ export const addToStorage = function (obj, key) {
   storageData.push(obj);
   localStorage.setItem(key, JSON.stringify(storageData));
 };
+
+
+
+export const getTasksFromStorage = function (user, listNum) {
+  let allTasks = JSON.parse(localStorage.getItem("task") || "[]");
+  let returnList = [];
+
+  allTasks.forEach(element => {
+    if (element.user == user && element.type == listNum){
+      returnList.push(element);
+    };
+  });
+  return returnList;
+};
+
+//обновление статуса задачи при ёё переносе по спискам
+export const updateInToStorage = function (objIdkey, objIdValue, key, param, value) {
+  const storageData = getFromStorage(key);
+  if(storageData !== null)
+  {
+    storageData.forEach(element => {
+      if(element[objIdkey] == objIdValue)
+      {
+        element[param] = value;
+        localStorage.setItem(key, JSON.stringify(storageData));
+        return;
+      };
+    });
+  }
+};
+
 
 // функция  для удаления элементов <li> (списковых элементов) на веб-странице, которые содержат указанный текстовый контент.
 export function delLiWithContent(searchRoot, textcontent) {
@@ -74,48 +106,67 @@ export function logOutBtn() {
 }
 
 export function adminUserBtn() {
-  console.log("выполняется функция");
   const adminButton = document.getElementById("app-User-Management");
-  const adminPage = document.querySelector('.admin-page');
   const adminPageElement = document.getElementById("adminPage");
   const closeAdminPageButton = document.querySelector(".admin-page > .close-admin-page");
 
-   if (closeAdminPageButton) {
+  if (closeAdminPageButton) {
     closeAdminPageButton.addEventListener("click", function () {
-    adminPageElement.style.display = "none";
-  });
-}
+      adminPageElement.style.display = "none";
+    });
+  }
 
   // Назначьте обработчик события на кнопку администратора
   if (adminButton) {
-  adminButton.addEventListener("click", function () {
-    adminPage.style.display = "block";
-    showUserList();
-    addNewUser();
-  });
-}
-}
-
-function showUserList () {
-  const usersList = document.querySelector('.users-list');
-  const users = getFromStorage('users');
-  usersList.innerHTML = '';
-  let user;
-  for (let i =  0; i < users.length; i++) {
-    user = document.createElement('p');
-    user.className = 'user-list-item'
-    user.innerText = `${i + 1}. Login: ${users[i].login}, Password: ${users[i].password}, Role: ${users[i].role}`
-    usersList.appendChild(user);
+    adminButton.addEventListener("click", function () {
+      adminPageElement.style.display = "block";
+      showUserList();
+      addNewUser();
+    });
   }
 }
 
-function  addNewUser () {
+function showUserList() {
+  const users = getFromStorage('users');
+  const usersListContainer = document.querySelector('.users-list'); // Используем контейнер .users-list
+
+  if (!usersListContainer) {
+    console.error('Контейнер .users-list не найден на странице.');
+    return;
+  }
+
+  usersListContainer.innerHTML = ''; // Очищаем контейнер
+
+  users.forEach((user, index) => {
+    const userDiv = document.createElement('div');
+    userDiv.className = 'user-list-item';
+
+    const userInfo = document.createElement('p');
+    userInfo.innerText = `${index + 1}. Login: ${user.login}, Password: ${user.password}, Role: ${user.role}`;
+
+    const deleteUserButton = document.createElement('button');
+    deleteUserButton.className = 'delete-user-button';
+    deleteUserButton.innerText = 'delete';
+
+    // Добавляем обработчик события для удаления пользователя
+    deleteUserButton.addEventListener('click', function () {
+      deleteUser(index); // Вызываем функцию удаления пользователя по индексу
+    });
+    userDiv.appendChild(userInfo);
+    userDiv.appendChild(deleteUserButton);
+    usersListContainer.appendChild(userDiv);
+  });
+}
+
+  
+function addNewUser() {
   const addUserForm = document.querySelector('#new-user-form');
   addUserForm.addEventListener("submit", listener);
+  
   function listener(e) {
     e.preventDefault();
     const formData = new FormData(addUserForm);
-    const userData = {name: formData.get("login"), password: formData.get("password"), role: formData.get("role")};
+    const userData = { name: formData.get("login"), password: formData.get("password"), role: formData.get("role") };
     generateUser(User, userData);
     addUserForm.childNodes[1].value = '';
     addUserForm.childNodes[3].value = '';
@@ -124,9 +175,19 @@ function  addNewUser () {
   }
 }
 
+function deleteUser(index) {
+  const users = getFromStorage('users');
+  if (index >= 0 && index < users.length) {
+    users.splice(index, 1); // Удаляем пользователя из массива
+    localStorage.setItem('users', JSON.stringify(users)); // Обновляем хранилище
+    showUserList(); // Обновляем список пользователей на странице
+  }
+}
 
-export function updateElementDisplay(element, display) {
-  element.style.display = display;
+export function updateElementDisplay(element, displayValue) {
+  if (element) { // Проверяем, существует ли элемент
+    element.style.display = displayValue;
+  }
 }
 
 export function toggleElementDisplay(element, display) {
@@ -137,50 +198,14 @@ export function toggleElementDisplay(element, display) {
   }
 }
 
+export function countTasks() {
+  const backlogTasksCounter = document.querySelector('.app-ready-tasks-counter');
+  const finishedTasksCounter = document.querySelector('.app-finished-tasks-counter');
+  const currentBacklogTasks = document.querySelectorAll('.app-list__backlog li').length;
+  const currentFinishedTasks = document.querySelectorAll('.app-list__finished li').length;
+  backlogTasksCounter.textContent = currentBacklogTasks;
+  finishedTasksCounter.textContent = currentFinishedTasks;
+}
 
-//удаление таска
-
-// // Сначала отменяем стандартное контекстное меню браузера
-// document.addEventListener('contextmenu', function (e) {
-//   e.preventDefault();
-  
-//   // Затем создаем собственное контекстное меню
-//   const contextMenu = document.createElement('div');
-//   contextMenu.className = 'custom-context-menu';
-  
-//   // Добавляем элементы контекстного меню (например, "Удалить")
-//   const deleteOption = document.createElement('div');
-//   deleteOption.textContent = 'Удалить';
-//   deleteOption.className = 'context-menu-item';
-  
-//   // Обработчик события для элемента "Удалить"
-//   deleteOption.addEventListener('click', function () {
-//     // Вызываем вашу функцию удаления или выполняем другие действия
-//     console.log('Выполняется удаление...');
-    
-//     // Закрываем контекстное меню
-//     contextMenu.remove();
-//   });
-  
-//   // Добавляем элементы в контекстное меню
-//   contextMenu.appendChild(deleteOption);
-  
-//   // Позиционируем контекстное меню в месте щелчка правой кнопкой мыши
-//   contextMenu.style.left = `${e.pageX}px`;
-//   contextMenu.style.top = `${e.pageY}px`;
-  
-//   // Добавляем контекстное меню на страницу
-//   document.body.appendChild(contextMenu);
-  
-//   // Обработчик события для закрытия контекстного меню при клике вне него
-//   document.addEventListener('click', function () {
-//     contextMenu.remove();
-//   });
-  
-//   // Закрываем контекстное меню при клике правой кнопкой мыши вне него
-//   document.addEventListener('contextmenu', function () {
-//     contextMenu.remove();
-//   });
-// });
 
 
