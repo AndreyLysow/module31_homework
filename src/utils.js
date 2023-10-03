@@ -1,5 +1,4 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
+
 import { logout, generateUser  } from "./services/auth";
 import { User } from "./models/User";
 
@@ -28,21 +27,7 @@ export const getTasksFromStorage = function (user, listNum) {
   return returnList;
 };
 
-//обновление статуса задачи при ёё переносе по спискам
-export const updateInToStorage = function (objIdkey, objIdValue, key, param, value) {
-  const storageData = getFromStorage(key);
-  if(storageData !== null)
-  {
-    storageData.forEach(element => {
-      if(element[objIdkey] == objIdValue)
-      {
-        element[param] = value;
-        localStorage.setItem(key, JSON.stringify(storageData));
-        return;
-      };
-    });
-  }
-};
+
 
 
 // функция  для удаления элементов <li> (списковых элементов) на веб-странице, которые содержат указанный текстовый контент.
@@ -198,14 +183,14 @@ export function toggleElementDisplay(element, display) {
   }
 }
 
+
+
 export function countTasks() {
   const backlogTasksCounter = document.querySelector('.app-ready-tasks-counter');
   const finishedTasksCounter = document.querySelector('.app-finished-tasks-counter');
-  const currentBacklogTasks = document.querySelectorAll('.app-list__backlog li').length;
-  const currentFinishedTasks = document.querySelectorAll('.app-list__finished li').length;
+  const currentBacklogTasks = document.querySelectorAll('.app-list__backlog .task').length;
+  const currentFinishedTasks = document.querySelectorAll('.app-list__finished .task').length;
   backlogTasksCounter.textContent = currentBacklogTasks;
   finishedTasksCounter.textContent = currentFinishedTasks;
 }
-
-
 

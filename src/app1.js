@@ -62,7 +62,7 @@ loginForm.addEventListener("submit", function (e) {
     const taskInputField = document.querySelector('.app-task-title_input');
     const backlogList = document.querySelector('.app-list__backlog');
     const readyList = document.querySelector('.app-list__ready');
-    const inProgressList = document.querySelector('.app-list__inProgress');
+    const inProgressList = document.querySelector('.app-list__in-progress');
     const finishedList = document.querySelector('.app-list__finished');
     const userMenuToggle = document.querySelector('.app-usermenu');
     const userMenu = document.querySelector('.app-menu__popup');
@@ -79,9 +79,8 @@ loginForm.addEventListener("submit", function (e) {
     const maxTasksCount = 100;
     const localStorageManager = new LocalStorageManager();
     myTasks = new Tasks(login, maxTasksCount, localStorageManager);
-  
-    loadAllTasksFromStorage(myTasks);
-
+    loadAllTasksFromStorage(myTasks)
+    initDragAndDrop();
     (document.querySelector('.app-ready-tasks-counter')).innerHTML=0;
     (document.querySelector('.app-finished-tasks-counter')).innerHTML=0;
     welcome.textContent = `Welcome ${user}: ${login}!`;
@@ -159,60 +158,34 @@ loginForm.addEventListener("submit", function (e) {
     myTasks.saveTasksToStorage();
     });
     document.addEventListener('click', closeAllSelect);
-
-
   }
 
+        // Добавляем обработчик  удаления тасков
+        const taskElementsDel = document.querySelectorAll(".task");
 
+        // Теперь используйте forEach для добавления обработчика к каждому элементу
+        taskElementsDel.forEach(taskElement => {
+          taskElement.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        
+            // Извлекаем значение data-task-id
+            const taskId = taskElement.dataset.taskId;
+            const userid = login;
+            const localStorageManager = new LocalStorageManager();
+        
+            // Вызываем функцию deleteTask с передачей аргументов
+            deleteTask(taskElement, taskId, userid, localStorageManager);
+        
+          });
+        });
+        
 
-// Добавляем обработчик удаления тасков
-const taskElementsDel = document.querySelectorAll(".task");
-taskElementsDel.forEach(taskElement => {
-  taskElement.addEventListener('contextmenu', (e) => {
-    e.preventDefault();
-
-    // Извлекаем значение id
-    const taskId = taskElement.id;
-
-    // Запрашиваем подтверждение удаления с помощью prompt
-    const confirmation = window.prompt("Вы действительно хотите удалить задачу? Введите 'да' для подтверждения.");
-
-    // Если пользователь ввел 'да', продолжаем удаление
-    if (confirmation && confirmation.toLowerCase() === 'да') {
-      // Удаляем таск из DOM
-      taskElement.remove();
-
-      // Получаем строку JSON из локального хранилища для пользователя
-      
-      const storedData = localStorage.getItem(login);
-
-      if (storedData) {
-        // Преобразуем строку JSON в объект
-        const userData = JSON.parse(storedData);
-
-        // Пройдемся по спискам (backlog, ready, inProgress, finished)
-        for (const listName in userData) {
-          if (userData.hasOwnProperty(listName)) {
-            const list = userData[listName];
-            // Ищем задачу с соответствующим id и удаляем ее из списка
-            const taskIndex = list.findIndex(task => task.id === taskId);
-            if (taskIndex !== -1) {
-              list.splice(taskIndex, 1); // Удаляем задачу из списка
-            }
-            myTasks.saveTasksToStorage();
-          }
-        }
-
-        // Сохраняем обновленные данные обратно в хранилище
-        localStorage.setItem(login, JSON.stringify(userData));
-        console.log("Задача с id", taskId, "удалена из хранилища");
-
-      }
-    }
-  });
-});
-
-
+  
+    // Добавляем обработчик события для удаления локального хранилища
+    const deleteLocalStorage = document.getElementById('deleteLocalStorage');
+    deleteLocalStorage.addEventListener('click', function () {
+      localStorage.clear();
+    });
 
   adminUserBtn();
   logOutBtn();
@@ -220,18 +193,15 @@ taskElementsDel.forEach(taskElement => {
 
 
 function addNewBacklogTask(sbmt, btn, backlogList, taskInputField, myTasks) {
-
+  
 
   sbmt.style.display = 'none';
   btn.style.display = 'block';
 
-  const taskId = myTasks.generateTaskId(); // Генерируем уникальный ID для задачи
-
   const newTaskAsListElement = document.createElement('li');
   newTaskAsListElement.textContent = taskInputField.value;
-  newTaskAsListElement.id = taskId;
-  newTaskAsListElement.setAttribute('data-task-id', taskId);
-  newTaskAsListElement.classList.add('draggable', 'task');
+
+  newTaskAsListElement.classList.add('draggable', 'task'); 
   newTaskAsListElement.setAttribute('draggable', 'true');
 
   newTaskAsListElement.addEventListener('dragstart', (e) => {
@@ -252,6 +222,7 @@ function addNewBacklogTask(sbmt, btn, backlogList, taskInputField, myTasks) {
   taskInputField.value = '';
   taskInputField.style.display = 'none';
   btn.focus();
+  initDragAndDrop();
 }
 
 function startNewBacklogTask(btn, sbmt, taskInputField) {
@@ -313,6 +284,7 @@ function addNewReadyTask(sbmt, btn, readyList, myTasks) {
   selectedTask.remove();
   delLiWithContent(selectMarker, newReadyTaskText);
   delOptionWithContent(selectMarker, newReadyTaskText);
+  initDragAndDrop();
   countTasks();
   myTasks.saveTasksToStorage();
 }
@@ -378,15 +350,12 @@ function addNewInProgressTask(sbmt, btn, inProgressList, myTasks) {
     btn.disabled = true;
   }
 
-  // delLiWithContent(document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker'), newInProgressTaskText);
-  // delOptionWithContent(document.querySelector('.app-progress-items > .app-select__list > .app-selection-marker'), newInProgressTaskText);
-
-  delLiWithContent(selectMarker, newInProgressTaskText);
-  delOptionWithContent(selectMarker, newInProgressTaskText);
+  delLiWithContent(document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker'), newInProgressTaskText);
+  delOptionWithContent(document.querySelector('.app-progress-items > .app-select__list > .app-selection-marker'), newInProgressTaskText);
 
   selectedTask.remove();
+  initDragAndDrop();
   countTasks();
-  myTasks.saveTasksToStorage();
 }
 
 function startNewInProgressTask(btn, sbmt) {
@@ -451,6 +420,7 @@ function addNewFinishedTask(sbmt, btn, finishedList, myTasks) {
   delLiWithContent(selectMarker, newFinishedTaskText);
   delOptionWithContent(selectMarker, newFinishedTaskText);
   selectedTask.remove();
+  initDragAndDrop();
   countTasks();
   myTasks.saveTasksToStorage();
 }
@@ -465,30 +435,22 @@ function startNewFinishedTask(btn, sbmt) {
 }
 
 
-
-
 function loadAllTasksFromStorage(myTasks) {
   const taskFields = ['backlog', 'ready', 'inProgress', 'finished'];
-  let fromList = "";
-  let toList = "";
-  initDragAndDrop(myTasks);
-
-
+  initDragAndDrop();
+    
   // Функция для обработки события dragstart
   function handleDragStart(e) {
     e.dataTransfer.setData('text/plain', e.target.textContent);
-    fromList = e.target.parentNode.classList[0].replace("app-list__", "");
-    e.target.classList.add('dragging');
+    e.target.classList.add('dragging'); // Добавляем класс для стилизации элемента во время перетаскивания
   }
 
   // Функция для обработки события dragend
   function handleDragEnd(e) {
-    e.target.classList.remove('dragging');
+    e.target.classList.remove('dragging'); // Убираем класс после завершения перетаскивания
     console.log('Перетаскивание задачи завершено.');
-    toList = e.target.parentNode.classList[0].replace("app-list__", "");
-    myTasks.moveTask(e.target.id, fromList, toList);
+  
   }
-
 
   taskFields.forEach((field) => {
     const tasks = myTasks.getTasksFromList(field);
@@ -498,20 +460,25 @@ function loadAllTasksFromStorage(myTasks) {
       console.error(`Элемент .app-list__${field} не найден на странице.`);
       return;
     }
+
     tasks.forEach((task) => {
       const taskText = task.text;
+
       const newTaskAsListElement = document.createElement('li');
-      newTaskAsListElement.id = task.id;
+
       newTaskAsListElement.textContent = taskText;
-      newTaskAsListElement.classList.add('draggable', 'task');
-      newTaskAsListElement.setAttribute('draggable', 'true'); // Добавляем атрибут draggable
+
+      newTaskAsListElement.classList.add('draggable', 'task'); // Добавляем классы "draggable" и "task"
+      newTaskAsListElement.setAttribute('draggable', 'true');
+
       newTaskAsListElement.addEventListener('dragstart', handleDragStart);
       newTaskAsListElement.addEventListener('dragend', handleDragEnd);
+
       listElement.appendChild(newTaskAsListElement);
+      
     });
+  
   });
-
-
 
   // Добавим один обработчик события dragstart к общему предку (например, к спискам задач)
   document.querySelectorAll('.app-list').forEach((listElement) => {
@@ -519,3 +486,10 @@ function loadAllTasksFromStorage(myTasks) {
     listElement.addEventListener('dragend', handleDragEnd);
   });
 }
+
+
+function deleteTask(taskElement, taskId, userid, localStorageManager) {
+  const isConfirmed = confirm('Вы уверены, что хотите удалить эту задачу?');
+    taskElement.remove();
+    localStorageManager.removeTaskFromStorage(userid, taskId);
+  }

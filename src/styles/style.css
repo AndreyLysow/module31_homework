@@ -166,12 +166,12 @@
 .app-backlog-items::-webkit-scrollbar-thumb:hover,.app-ready-items::-webkit-scrollbar-thumb:hover,.app-progress-items::-webkit-scrollbar-thumb:hover,.app-finished-items::-webkit-scrollbar-thumb:hover {
   background: #CBCBCB;
 }
-.app-list__backlog,.app-list__ready, .app-list__in-progress, .app-list__finished{
+.app-list__backlog,.app-list__ready, .app-list__inProgress, .app-list__finished{
   display: contents;
   list-style: none;
   list-style-position: inside;
 }
-.app-list__backlog>li,.app-list__ready>li, .app-list__in-progress>li, .app-list__finished>li {
+.app-list__backlog>li,.app-list__ready>li, .app-list__inProgress>li, .app-list__finished>li {
   display: block;
   padding: 0 2px;
   margin: 2px 0;
@@ -450,7 +450,7 @@ li {
   max-width: 400px;
 }
 
-.app-login-btn, #new-user-btn, .app-login-btn:hover, #new-user-btn:hover {
+.app-login-btn, #new-user-btn,  .app-login-btn:hover, #new-user-btn:hover {
   min-width: 80px;
   border: none;
   border-radius: 5px;
@@ -458,7 +458,7 @@ li {
   font-weight: 500;
 }
 
-.app-login-btn:hover, #new-user-btn:hover {
+.app-login-btn:hover,  #new-user-btn:hover {
   background-color: rgb(197, 197, 197);
 }
 
@@ -502,15 +502,7 @@ li {
   margin-left: 10px;
 }
 
-.delete-local-storage {
-  background-color: #ff6b6b;
-  color: #fff;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 3px;
-  margin-left: 10px;
-}
+
 
 /* Медиазапрос для ширины экрана 400px и менее */
 @media screen and (max-width: 400px) {

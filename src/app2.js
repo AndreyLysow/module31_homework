@@ -6,7 +6,7 @@ import noAccessTemplate from "./templates/noAccess.html";
 import { User } from "./models/User";
 import { authUser, generateUsers } from "./services/auth";
 import { Tasks, closeAllSelect } from "./services/taskManager";
-import { initDragAndDrop } from "./services/dragAndDrop";
+
 import {
   delLiWithContent,
   delOptionWithContent,
@@ -80,7 +80,8 @@ loginForm.addEventListener("submit", function (e) {
     const localStorageManager = new LocalStorageManager();
     myTasks = new Tasks(login, maxTasksCount, localStorageManager);
   
-    loadAllTasksFromStorage(myTasks);
+    // loadAllTasksFromStorage(myTasks);
+    initDragAndDrop();
 
     (document.querySelector('.app-ready-tasks-counter')).innerHTML=0;
     (document.querySelector('.app-finished-tasks-counter')).innerHTML=0;
@@ -199,18 +200,34 @@ taskElementsDel.forEach(taskElement => {
             if (taskIndex !== -1) {
               list.splice(taskIndex, 1); // Удаляем задачу из списка
             }
-            myTasks.saveTasksToStorage();
           }
         }
 
         // Сохраняем обновленные данные обратно в хранилище
         localStorage.setItem(login, JSON.stringify(userData));
         console.log("Задача с id", taskId, "удалена из хранилища");
-
       }
     }
   });
 });
+
+
+// Добавляем обработчик события для удаления локального хранилища
+const deleteUsercontentLocalStorage = document.getElementById('deleteUsercontentLocalStorage');
+deleteUsercontentLocalStorage.addEventListener('click', function () {
+  try {
+   
+    console.log(login); // Добавьте эту строку для отладки
+
+    // Удаляем данные из локального хранилища
+    localStorage.removeItem(login);
+
+    console.log(login, "данные удалены");
+  } catch (error) {
+    console.error("Произошла ошибка при удалении данных:", error);
+  }
+});
+
 
 
 
@@ -220,7 +237,7 @@ taskElementsDel.forEach(taskElement => {
 
 
 function addNewBacklogTask(sbmt, btn, backlogList, taskInputField, myTasks) {
-
+  
 
   sbmt.style.display = 'none';
   btn.style.display = 'block';
@@ -465,13 +482,69 @@ function startNewFinishedTask(btn, sbmt) {
 }
 
 
+function initDragAndDrop() {
+  const containers = document.querySelectorAll(".task-list");
+
+  containers.forEach((container) => {
+    container.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      const draggingElement = document.querySelector(".dragging");
+      const afterElement = getDragAfterElement(container, e.clientY);
+      if (afterElement == null) {
+        container.querySelector("ul").appendChild(draggingElement);
+      } else {
+        container.querySelector("ul").insertBefore(draggingElement, afterElement);
+      }
+    });
+
+    container.addEventListener("dragstart", (e) => {
+      const target = e.target;
+      if (target.classList.contains('draggable')) {
+        setTimeout(() => {
+          target.classList.add('dragging');
+        }, 0);
+        e.dataTransfer.setData('text/plain', target.textContent);
+      }
+    });
+
+    container.addEventListener("dragend", (e) => {
+      const target = e.target;
+      if (target.classList.contains('draggable')) {
+        target.classList.remove('dragging');
+        const fromList = target.dataset.from;
+        // Выполните дополнительные действия, если необходимо
+      }
+    });
+  });
+
+  // Функция для определения элемента, перед которым нужно вставить перетаскиваемый элемент
+  function getDragAfterElement(container, y) {
+    const draggableElements = [...container.querySelectorAll(".draggable:not(.dragging)")];
+    return draggableElements.reduce(
+      (closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: child };
+        } else {
+          return closest;
+        }
+      },
+      { offset: Number.NEGATIVE_INFINITY }
+    ).element;
+  }
+}
+
+
+
 
 
 function loadAllTasksFromStorage(myTasks) {
   const taskFields = ['backlog', 'ready', 'inProgress', 'finished'];
   let fromList = "";
   let toList = "";
-  initDragAndDrop(myTasks);
+  // initDragAndDrop(myTasks);
 
 
   // Функция для обработки события dragstart

@@ -5,6 +5,7 @@ export class Tasks {
     this.userid = login;
     this.maxTasksCount = maxTasksCount;
     this.localStorageManager = localStorageManager;
+    // this.taskId = taskId;
     this.taskLists = {
       backlog: [],
       ready: [],
@@ -25,9 +26,10 @@ export class Tasks {
  // Генерация уникального ID для задачи
  generateTaskId() {
   const timestamp = new Date().getTime(); // Получаем текущую временную метку
-  const random = Math.floor(Math.random() * 1000); // Генерируем случайное число от 0 до 999
-  return `${timestamp}-${random}`; // Соединяем временную метку и случайное число
+  const random = Math.random().toString(36).substring(2, 15); // Генерируем случайную строку
+  return `${timestamp}-${random}`; // Соединяем временную метку и случайную строку
 }
+
 
    // Добавление задачи
    addTaskToList(listName, task) {
@@ -56,57 +58,57 @@ export class Tasks {
 // Сохранение задач в localStorage
 saveTasksToStorage() {
   // Удаляем предыдущие задачи из хранилища
-  this.localStorageManager.removeTasksFromStorage(this.userid);
+  // this.localStorageManager.removeTasksFromStorage(this.userid);
   this.localStorageManager.saveTasksToStorage(this.userid, this.taskLists);
 }
 
 
 
-loadTasksFromStorage() {
-  try {
-    const tasks = this.localStorageManager.getTasksFromStorage(this.userid);
-    if (tasks) {
-      // Очищаем текущие списки задач
-      this.taskLists = {
-        backlog: [],
-        ready: [],
-        inProgress: [],
-        finished: [],
-      };
-
-      // Загружаем задачи из хранилища
-      Object.keys(tasks).forEach((listName) => {
-        if (this.taskLists[listName]) {
-          this.taskLists[listName] = tasks[listName];
-        }
-      });
-    }
-  } catch (error) {
-    console.error('Ошибка при загрузке задач из локального хранилища:', error);
-  }
-}
-  
-
-
-
-
 // loadTasksFromStorage() {
-//   const taskLists = this.localStorageManager.getTasksFromStorage(this.userid);
-//   console.log("новая", taskLists);
-//   return taskLists;
+//   try {
+//     const tasks = this.localStorageManager.getTasksFromStorage(this.userid);
+//     if (tasks) {
+//       // Очищаем текущие списки задач
+//       this.taskLists = {
+//         backlog: [],
+//         ready: [],
+//         inProgress: [],
+//         finished: [],
+//       };
+
+//       // Загружаем задачи из хранилища
+//       Object.keys(tasks).forEach((listName) => {
+//         if (this.taskLists[listName]) {
+//           this.taskLists[listName] = tasks[listName];
+//         }
+//       });
+//     }
+//   } catch (error) {
+//     console.error('Ошибка при загрузке задач из локального хранилища:', error);
+//   }
 // }
 
-// saveTasksToStorage() {
-//   this.localStorageManager.saveTasksToStorage(this.userid, this.taskLists);
+loadTasksFromStorage() {
+  const tasks = this.localStorageManager.getTasksFromStorage(this.userid);
+  if (tasks) {
+    this.taskLists = tasks;
+  }
+}
+
+
+// removeTaskFromList(listName, taskId) {
+//   const index = this.taskLists[listName].findIndex(task => task.id === taskId);
+//   if (index !== -1) {
+//     this.taskLists[listName].splice(index, 1);
+//     this.saveTasksToStorage();
+//   }
 // }
 
 removeTaskFromList(listName, taskId) {
-  const index = this.taskLists[listName].findIndex(task => task.id === taskId);
-  if (index !== -1) {
-    this.taskLists[listName].splice(index, 1);
-    this.saveTasksToStorage();
-  }
+  this.taskLists[listName] = this.taskLists[listName].filter(task => task.id !== taskId);
+  this.saveTasksToStorage();
 }
+
 
   // Перемещение задачи между состояниями (например, из backlog в ready)
   moveTask(taskId, fromState, toState) {
@@ -118,6 +120,9 @@ removeTaskFromList(listName, taskId) {
       this.saveTasksToStorage();
     }
   }
+
+  
+
 
     // Обновление состояния задачи
     updateTaskState(taskId, newState) {
@@ -138,11 +143,11 @@ removeTaskFromList(listName, taskId) {
   //   return false;
   // }
 
- // Удаление задачи
- removeTasksFromStorage(userid) {
-  localStorage.removeItem(userid);
+
+
+findTaskById(taskId, state) {
+  return this.taskLists[state].find(task => task.id === taskId);
 }
-  
 
   getTasksFromList(listName) {
     return this.taskLists[listName] || [];
@@ -154,7 +159,7 @@ removeTaskFromList(listName, taskId) {
     }
   }
 
- // Метод для добавления задачи в список "backlog"
+ //Метод для добавления задачи в список "backlog"
  writeBacklog(taskText) {
   const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
   const task = { id: taskId, text: taskText }; // Создаем объект задачи
@@ -162,7 +167,7 @@ removeTaskFromList(listName, taskId) {
   // Добавляем задачу в "backlog"
   this.addTaskToList('backlog', task);
 
-  // Обновляем элементы интерфейса и счетчик задач
+  // Обновляем элементы интерфейса 
   let readyItemCandidates = document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker');
   let readyItemCandidateNewOpt = document.createElement('option');
   readyItemCandidateNewOpt.textContent = taskText;
@@ -172,6 +177,33 @@ removeTaskFromList(listName, taskId) {
 
 }
 
+// writeBacklog(taskText, id) {
+//   const taskId = id || this.generateTaskId(); // Если `id` передан, используем его, в противном случае генерируем уникальный ID
+//   const task = { id: taskId, text: taskText };
+
+//   // Добавляем задачу в "backlog"
+//   this.addTaskToList('backlog', task);
+
+//   // Обновляем элементы интерфейса
+//   let readyItemCandidates = document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker');
+//   let readyItemCandidateNewOpt = document.createElement('option');
+//   readyItemCandidateNewOpt.textContent = taskText;
+  
+//   // Устанавливаем идентификатор опции
+//   if (id) {
+//     readyItemCandidateNewOpt.id = id;
+//   }
+  
+//   readyItemCandidates.appendChild(readyItemCandidateNewOpt);
+//   document.querySelector('.app-container-ready > .append-button').disabled = false;
+//   redrawSelect('.app-ready-items');
+// }
+
+
+
+
+
+
 writeReady(taskText) {
   const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
   const task = { id: taskId, text: taskText }; // Создаем объект задачи
@@ -180,9 +212,9 @@ writeReady(taskText) {
   this.addTaskToList('ready', task);
 
   // Удаляем задачу из "backlog"
-  this.removeFromBacklog(taskText);
+  this.removeFromBacklog(taskId);
 
-  // Обновляем элементы интерфейса и счетчик задач
+  // Обновляем элементы интерфейса
   let inProgressItemCandidates = document.querySelector('.app-progress-items > .app-select__list > .app-selection-marker');
   let inProgressItemCandidateNewOpt = document.createElement('option');
   inProgressItemCandidateNewOpt.textContent = taskText;
@@ -201,9 +233,9 @@ writeInProgress(taskText) {
   this.addTaskToList('inProgress', task);
 
   // Удаляем задачу из "ready"
-  this.removeFromReady(taskText);
+  this.removeFromReady(taskId);
 
-  // Обновляем элементы интерфейса и счетчик задач
+  // Обновляем элементы интерфейса
   let inProgressItemCandidates = document.querySelector('.app-finished-items > .app-select__list > .app-selection-marker');
   let inProgressItemCandidateNewOpt = document.createElement('option');
   inProgressItemCandidateNewOpt.textContent = taskText;
@@ -223,7 +255,7 @@ writeFinished(taskText) {
   this.addTaskToList('finished', task);
 
   // Удаляем задачу из "inProgress"
-  this.removeFromInProgress(taskText);
+  this.removeFromInProgress(taskId);
 
   document.querySelector('.app-container-finished> .append-button').disabled = false;
   redrawSelect('.app-finished-items');
@@ -232,23 +264,23 @@ writeFinished(taskText) {
 
 
   // Метод для удаления задачи из списка "backlog"
-  removeFromBacklog(textString) {
-    this.removeTaskFromList('backlog', textString);
+  removeFromBacklog(taskId) {
+    this.removeTaskFromList('backlog', taskId);
   }
 
   // Метод для удаления задачи из списка "ready"
-  removeFromReady(textString) {
-    this.removeTaskFromList('ready', textString);
+  removeFromReady(taskId) {
+    this.removeTaskFromList('ready', taskId);
   }
 
   // Метод для удаления задачи из списка "inProgress"
-  removeFromInProgress(textString) {
-    this.removeTaskFromList('inProgress', textString);
+  removeFromInProgress(taskId) {
+    this.removeTaskFromList('inProgress', taskId);
   }
 
   // Метод для удаления задачи из списка "finished"
-  removeFromFinished(textString) {
-    this.removeTaskFromList('finished', textString);
+  removeFromFinished(taskId) {
+    this.removeTaskFromList('finished', taskId);
   }
 }
 
@@ -314,3 +346,4 @@ export function closeAllSelect(elmnt) {
     }
   }
 }
+
