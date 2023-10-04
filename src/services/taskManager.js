@@ -22,6 +22,14 @@ export class Tasks {
         alert('Задачи будут сохранены перед выходом.');
       });
   }
+  loadTasksFromStorage() {
+    const tasks = this.localStorageManager.getTasksFromStorage(this.userid);
+    if (tasks) {
+      this.taskLists = tasks;
+    }
+  }
+
+
 
  // Генерация уникального ID для задачи
  generateTaskId() {
@@ -57,8 +65,8 @@ export class Tasks {
 
 // Сохранение задач в localStorage
 saveTasksToStorage() {
-  // Удаляем предыдущие задачи из хранилища
-  // this.localStorageManager.removeTasksFromStorage(this.userid);
+
+  this.localStorageManager.removeTasksFromStorage(this.userid);
   this.localStorageManager.saveTasksToStorage(this.userid, this.taskLists);
 }
 
@@ -96,18 +104,18 @@ loadTasksFromStorage() {
 }
 
 
-// removeTaskFromList(listName, taskId) {
-//   const index = this.taskLists[listName].findIndex(task => task.id === taskId);
-//   if (index !== -1) {
-//     this.taskLists[listName].splice(index, 1);
-//     this.saveTasksToStorage();
-//   }
-// }
-
 removeTaskFromList(listName, taskId) {
-  this.taskLists[listName] = this.taskLists[listName].filter(task => task.id !== taskId);
-  this.saveTasksToStorage();
+  const index = this.taskLists[listName].findIndex(task => task.id === taskId);
+  if (index !== -1) {
+    this.taskLists[listName].splice(index, 1);
+    this.saveTasksToStorage();
+  }
 }
+
+// removeTaskFromList(listName, taskId) {
+//   this.taskLists[listName] = this.taskLists[listName].filter(task => task.id !== taskId);
+//   this.saveTasksToStorage();
+// }
 
 
   // Перемещение задачи между состояниями (например, из backlog в ready)

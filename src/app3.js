@@ -78,10 +78,10 @@ loginForm.addEventListener("submit", function (e) {
    
     const maxTasksCount = 100;
     const localStorageManager = new LocalStorageManager();
-    myTasks = new Tasks(login, maxTasksCount, localStorageManager);
+     myTasks = new Tasks(login, maxTasksCount, localStorageManager);
   
-    loadAllTasksFromStorage(myTasks);
-    initDragAndDrop();
+    // loadAllTasksFromStorage(myTasks);
+    // initDragAndDrop();
     (document.querySelector('.app-ready-tasks-counter')).innerHTML=0;
     (document.querySelector('.app-finished-tasks-counter')).innerHTML=0;
     welcome.textContent = `Welcome ${user}: ${login}!`;
@@ -131,36 +131,30 @@ loginForm.addEventListener("submit", function (e) {
     });
     backlogSbmt.addEventListener('click', function () {
       addNewBacklogTask(backlogSbmt, backlogAddBtn, backlogList, taskInputField, myTasks);
-            // Сохранить задачи
-      myTasks.saveTasksToStorage();
+ 
     });
     readyAddBtn.addEventListener('click', function () {
       startNewReadyTask(readyAddBtn, readySbmt);
     });
     readySbmt.addEventListener('click', function () {
       addNewReadyTask(readySbmt, readyAddBtn, readyList, myTasks);
-            // Сохранить задачи
-      myTasks.saveTasksToStorage();
+     
     });
     inProgressAddBtn.addEventListener('click', function () {
       startNewInProgressTask(inProgressAddBtn, inProgressSbmt);
     });
     inProgressSbmt.addEventListener('click', function () {
       addNewInProgressTask(inProgressSbmt, inProgressAddBtn, inProgressList, myTasks);
-      // Сохранить задачи
-      myTasks.saveTasksToStorage();
+    
     });
     finishedAddBtn.addEventListener('click', function () {
       startNewFinishedTask(finishedAddBtn, finishedSbmt);
     });
     finishedSbmt.addEventListener('click', function () {
       addNewFinishedTask(finishedSbmt, finishedAddBtn, finishedList, myTasks);
-      // Сохранить задачи
-    myTasks.saveTasksToStorage();
+    
     });
     document.addEventListener('click', closeAllSelect);
-
-
   }
 
 
@@ -182,32 +176,8 @@ taskElementsDel.forEach(taskElement => {
       // Удаляем таск из DOM
       taskElement.remove();
 
-      // Получаем строку JSON из локального хранилища для пользователя
-      
-      const storedData = localStorage.getItem(login);
-
-      if (storedData) {
-        // Преобразуем строку JSON в объект
-        const userData = JSON.parse(storedData);
-
-        // Пройдемся по спискам (backlog, ready, inProgress, finished)
-        for (const listName in userData) {
-          if (userData.hasOwnProperty(listName)) {
-            const list = userData[listName];
-            // Ищем задачу с соответствующим id и удаляем ее из списка
-            const taskIndex = list.findIndex(task => task.id === taskId);
-            if (taskIndex !== -1) {
-              list.splice(taskIndex, 1); // Удаляем задачу из списка
-            }
-            myTasks.saveTasksToStorage();
-          }
-        }
-
-        // Сохраняем обновленные данные обратно в хранилище
-        localStorage.setItem(login, JSON.stringify(userData));
-        console.log("Задача с id", taskId, "удалена из хранилища");
-
-      }
+      // Вызываем метод удаления задачи из экземпляра tasks
+      tasks.removeTask(login, taskId);
     }
   });
 });
@@ -239,7 +209,7 @@ function addNewBacklogTask(sbmt, btn, backlogList, taskInputField, myTasks) {
     e.target.classList.remove('dragging');
     console.log('Перетаскивание задачи завершено.');
     countTasks();
-    myTasks.saveTasksToStorage();
+   
   });
 
   backlogList.insertBefore(newTaskAsListElement, backlogList.firstElementChild);
@@ -287,7 +257,6 @@ function addNewReadyTask(sbmt, btn, readyList, myTasks) {
     e.target.classList.remove("dragging");
     console.log('Перетаскивание задачи завершено.');
     countTasks();
-    myTasks.saveTasksToStorage();
   });
 
   newTaskAsListElement.appendChild(document.createTextNode(newReadyTaskText));
@@ -310,7 +279,6 @@ function addNewReadyTask(sbmt, btn, readyList, myTasks) {
   delLiWithContent(selectMarker, newReadyTaskText);
   delOptionWithContent(selectMarker, newReadyTaskText);
   countTasks();
-  myTasks.saveTasksToStorage();
 }
 
 function startNewReadyTask(btn, sbmt) {
@@ -343,20 +311,37 @@ function addNewInProgressTask(sbmt, btn, inProgressList, myTasks) {
   const newInProgressTaskText = selectedTask.innerText;
   const newTaskAsListElement = document.createElement('li');
 
-  newTaskAsListElement.classList.add('draggable', 'task'); 
-  newTaskAsListElement.setAttribute('draggable', 'true');
-
-  newTaskAsListElement.addEventListener('dragstart', (e) => {
+  function handleDragStartTask(e) {
     e.dataTransfer.setData('text/plain', e.target.textContent);
     e.target.classList.add("dragging");
-  });
-
-  newTaskAsListElement.addEventListener('dragend', (e) => {
+  }
+  
+  function handleDragEndTask(e) {
     e.target.classList.remove("dragging");
     console.log('Перетаскивание задачи завершено.');
     countTasks();
-    myTasks.saveTasksToStorage();
-  });
+  }
+  
+  newTaskAsListElement.classList.add('draggable', 'task'); 
+  newTaskAsListElement.setAttribute('draggable', 'true');
+  
+  newTaskAsListElement.addEventListener('dragstart', handleDragStartTask);
+  newTaskAsListElement.addEventListener('dragend', handleDragEndTask)
+
+
+  // newTaskAsListElement.classList.add('draggable', 'task'); 
+  // newTaskAsListElement.setAttribute('draggable', 'true');
+
+  // newTaskAsListElement.addEventListener('dragstart', (e) => {
+  //   e.dataTransfer.setData('text/plain', e.target.textContent);
+  //   e.target.classList.add("dragging");
+  // });
+
+  // newTaskAsListElement.addEventListener('dragend', (e) => {
+  //   e.target.classList.remove("dragging");
+  //   console.log('Перетаскивание задачи завершено.');
+  //   countTasks();
+  // });
 
   newTaskAsListElement.appendChild(document.createTextNode(newInProgressTaskText));
   inProgressList.insertBefore(newTaskAsListElement, inProgressList.lastElementChild);
@@ -382,7 +367,6 @@ function addNewInProgressTask(sbmt, btn, inProgressList, myTasks) {
 
   selectedTask.remove();
   countTasks();
-  myTasks.saveTasksToStorage();
 }
 
 function startNewInProgressTask(btn, sbmt) {
@@ -411,25 +395,30 @@ function addNewFinishedTask(sbmt, btn, finishedList, myTasks) {
   }
 
   const newFinishedTaskText = selectedTask.innerText;
-  const newTaskAsListElement = document.createElement('li');
+  // const newTaskAsListElement = document.createElement('li');
 
-  newTaskAsListElement.classList.add('draggable', 'task'); 
-  newTaskAsListElement.setAttribute('draggable', 'true');
+  // newTaskAsListElement.classList.add('draggable', 'task'); 
+  // newTaskAsListElement.setAttribute('draggable', 'true');
 
-  newTaskAsListElement.addEventListener('dragstart', (e) => {
-    e.dataTransfer.setData('text/plain', e.target.textContent);
-    e.target.classList.add("dragging");
-  });
+  // newTaskAsListElement.addEventListener('dragstart', (e) => {
+  //   e.dataTransfer.setData('text/plain', e.target.textContent);
+  //   e.target.classList.add("dragging");
+  // });
 
-  newTaskAsListElement.addEventListener('dragend', (e) => {
-    e.target.classList.remove("dragging");
-    console.log('Перетаскивание задачи завершено.');
-    myTasks.saveTasksToStorage();
-    countTasks();
-  });
+  // newTaskAsListElement.addEventListener('dragend', (e) => {
+  //   e.target.classList.remove("dragging");
+  //   console.log('Перетаскивание задачи завершено.');
+  //   countTasks();
+  // });
+  // newTaskAsListElement.appendChild(document.createTextNode(newFinishedTaskText));
 
-  newTaskAsListElement.appendChild(document.createTextNode(newFinishedTaskText));
-  finishedList.insertBefore(newTaskAsListElement, finishedList.lastElementChild);
+
+
+// Создаем новый элемент задачи с помощью функции createTaskElement
+const newTaskElement = createTaskElement(newFinishedTaskText);
+
+// Вставляем новый элемент задачи в список завершенных задач
+finishedList.insertBefore(newTaskElement, finishedList.lastElementChild);
 
   myTasks.writeFinished(newFinishedTaskText);
 
@@ -448,7 +437,7 @@ function addNewFinishedTask(sbmt, btn, finishedList, myTasks) {
   delOptionWithContent(selectMarker, newFinishedTaskText);
   selectedTask.remove();
   countTasks();
-  myTasks.saveTasksToStorage();
+  // myTasks.saveTasksToStorage();
 }
 
 
@@ -517,3 +506,32 @@ function loadAllTasksFromStorage(myTasks) {
   });
 }
 
+
+function createTaskElement(taskText) {
+  const newTaskAsListElement = document.createElement('li');
+  newTaskAsListElement.classList.add('draggable', 'task'); 
+  newTaskAsListElement.setAttribute('draggable', 'true');
+  newTaskAsListElement.textContent = taskText;
+
+  function handleDragStartTask(e) {
+    e.dataTransfer.setData('text/plain', e.target.textContent);
+    e.target.classList.add("dragging");
+  }
+
+  function handleDragEndTask(e) {
+    e.target.classList.remove("dragging");
+    console.log('Перетаскивание задачи завершено.');
+    countTasks();
+    const fromList = e.target.parentNode.classList[0].replace("app-list__", "");
+    const toList = e.target.closest('.app-list').classList[0].replace("app-list__", "");
+    const taskId = e.target.id;
+
+    // Здесь вызывается метод перемещения задачи
+    myTasks.moveTask(taskId, fromList, toList);
+  }
+
+  newTaskAsListElement.addEventListener('dragstart', handleDragStartTask);
+  newTaskAsListElement.addEventListener('dragend', handleDragEndTask);
+
+  return newTaskAsListElement;
+}

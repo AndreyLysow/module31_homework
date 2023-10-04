@@ -6,14 +6,23 @@ export class LocalStorageManager {
     return JSON.parse(data) || { backlog: [], ready: [], inProgress: [], finished: [] };
   }
 
-  saveTasksToStorage(userid, tasks) {
-    localStorage.setItem(userid, JSON.stringify(tasks));
+  saveTasksToStorage(userid, taskLists) {
+    this.removeTasksFromStorage(userid); // Удалите предыдущие данные
+    localStorage.setItem(userid, JSON.stringify(taskLists)); // Сохраните новые данные
   }
+
 
   addTask(userid, listName, task) {
     const tasks = this.getTasksFromStorage(userid);
     tasks[listName].push(task);
     this.saveTasksToStorage(userid, tasks);
+  }
+
+  loadTasksFromStorage() {
+    const tasks = this.localStorageManager.getTasksFromStorage(this.userid);
+    if (tasks) {
+      this.taskLists = tasks;
+    }
   }
 
   removeTask(userid, taskId) {
@@ -27,6 +36,12 @@ export class LocalStorageManager {
 
     this.saveTasksToStorage(userid, tasks);
   }
+
+  removeTasksFromStorage(userid) {
+  
+    localStorage.removeItem(`tasks_${userid}`);
+  }
+
 
   moveTask(userid, taskId, sourceList, targetList) {
     const tasks = this.getTasksFromStorage(userid);
@@ -44,3 +59,6 @@ export class LocalStorageManager {
     }
   }
 }
+
+
+
