@@ -1,37 +1,45 @@
-import {countTasks } from "../utils";
+import { countTasks } from "../utils";
 
-export function  initDragAndDrop() {
+export function initDragAndDrop() {
   const containers = document.querySelectorAll(".task-list");
 
+  // Функция для обработки события dragover
+  function handleDragOver(e) {
+    e.preventDefault();
+    const container = e.currentTarget; // Получаем текущий контейнер
+    const draggingElement = document.querySelector(".dragging");
+    const afterElement = getDragAfterElement(container, e.clientY);
+    if (afterElement == null) {
+      container.querySelector("ul").appendChild(draggingElement);
+    } else {
+      container.querySelector("ul").insertBefore(draggingElement, afterElement);
+    }
+  }
+
+  // Функция для обработки события dragstart
+  function handleDragStart(e) {
+    const target = e.target;
+    if (target.classList.contains('draggable')) {
+      setTimeout(() => {
+        target.classList.add('dragging');
+      }, 0);
+      e.dataTransfer.setData('text/plain', target.textContent);
+    }
+  }
+
+  // Функция для обработки события dragend
+  function handleDragEnd(e) {
+    const target = e.target;
+    if (target.classList.contains('draggable')) {
+      target.classList.remove('dragging');
+      countTasks();
+    }
+  }
+
   containers.forEach((container) => {
-    container.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      const draggingElement = document.querySelector(".dragging");
-      const afterElement = getDragAfterElement(container, e.clientY);
-      if (afterElement == null) {
-        container.querySelector("ul").appendChild(draggingElement);
-      } else {
-        container.querySelector("ul").insertBefore(draggingElement, afterElement);
-      }
-    });
-
-    container.addEventListener("dragstart", (e) => {
-      const target = e.target;
-      if (target.classList.contains('draggable')) {
-        setTimeout(() => {
-          target.classList.add('dragging');
-        }, 0);
-        e.dataTransfer.setData('text/plain', target.textContent);
-      }
-    });
-
-    container.addEventListener("dragend", (e) => {
-      const target = e.target;
-      if (target.classList.contains('draggable')) {
-        target.classList.remove('dragging');
-        countTasks();
-      }
-    });
+    container.addEventListener("dragover", handleDragOver);
+    container.addEventListener("dragstart", handleDragStart);
+    container.addEventListener("dragend", handleDragEnd);
   });
 
   // Функция для определения элемента, перед которым нужно вставить перетаскиваемый элемент
