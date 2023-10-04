@@ -75,17 +75,27 @@ export function delOptionWithContent(searchRoot, textcontent) {
 }
 
 
-/**
- * Обработчик кнопки "Logout":
- * При клике на кнопку "Logout", функция вызывает logout() для выхода из учетной записи.
- * Затем она восстанавливает начальный контент (initialTemplate) и перезагружает страницу.
- */
+//Обработчик кнопки "Logout": попытка сделать глубокий релоад гугл хром
+
 export function logOutBtn() {
   const logoutForm = document.querySelector("#app-logout-btn");
   if (logoutForm) {
     logoutForm.addEventListener("click", function () {
-      logout(); 
-      location.reload();
+      window.forceReload = function(){
+        if( !window.fetch)return document.location.reload( true);
+        var els = document.getElementsByTagName( "*");
+        for( var i = 0; i < els.length; i++){
+            var src = "";
+            if( els[i].tagName == "A")continue;
+            if( !src && els[i].src)src = els[i].getAttribute( "src");
+            if( !src && els[i].href)src = els[i].getAttribute( "href");
+            if( !src)continue;
+            fetch( src, { cache: "reload"});
+        }
+        return document.location.reload( true);
+    };
+    window.forceReload()
+  
     });
   }
 }
