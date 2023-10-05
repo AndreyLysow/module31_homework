@@ -41,16 +41,15 @@ export class Tasks {
 
    // Добавление задачи
    addTaskToList(listName, task) {
-    if (this.taskLists[listName].length < this.maxTasksCount) {
-      task.id = this.generateTaskId();
+    if (this.taskLists[listName]) {
       this.taskLists[listName].push(task);
+      this.cleanUpTasks(listName);
       this.saveTasksToStorage();
-    } else {
-      alert('Максимальное количество задач достигнуто.');
+      return true;
     }
+    return false;
   }
 
- 
 
 // Сохранение задач в localStorage
 saveTasksToStorage() {
@@ -69,30 +68,38 @@ loadTasksFromStorage() {
 }
 
 
+// removeTaskFromList(listName, taskId) {
+//   const index = this.taskLists[listName].findIndex(task => task.id === taskId);
+//   if (index !== -1) {
+//     this.taskLists[listName].splice(index, 1);
+//     this.saveTasksToStorage();
+//   }
+// }
+
 removeTaskFromList(listName, taskId) {
-  const index = this.taskLists[listName].findIndex(task => task.id === taskId);
-  if (index !== -1) {
-    this.taskLists[listName].splice(index, 1);
-    this.saveTasksToStorage();
+  this.taskLists[listName] = this.taskLists[listName].filter(task => task.id !== taskId);
+  this.saveTasksToStorage();
+}
+
+
+moveTask(taskId, fromState, toState) {
+  const taskToMoveIndex = this.taskLists[fromState].findIndex(task => task.id === taskId);
+  if (taskToMoveIndex !== -1) {
+    const taskToMove = this.taskLists[fromState][taskToMoveIndex];
+    taskToMove.state = toState;
+    this.taskLists[toState].push(taskToMove);
+    this.taskLists[fromState].splice(taskToMoveIndex, 1); // Удаляем задачу из fromState
+    this.saveTasksToStorage(); // Сохраняем изменения в локальном хранилище
+    this.removeTaskFromStorage(taskId, fromState); // Удаляем задачу из предшествующего поля
   }
 }
 
-// removeTaskFromList(listName, taskId) {
-//   this.taskLists[listName] = this.taskLists[listName].filter(task => task.id !== taskId);
-//   this.saveTasksToStorage();
-// }
+removeTaskFromStorage(taskId, fromState) {
+  this.localStorageManager.removeTask(this.userid, taskId, fromState);
+}
 
-
-  // Перемещение задачи между состояниями (например, из backlog в ready)
-  moveTask(taskId, fromState, toState) {
-    const taskToMove = this.findTaskById(taskId, fromState);
-    if (taskToMove) {
-      this.taskLists[fromState] = this.taskLists[fromState].filter(task => task.id !== taskId);
-      taskToMove.state = toState;
-      this.taskLists[toState].push(taskToMove);
-      this.saveTasksToStorage();
-    }
-  }
+ 
+ 
 
     // Обновление состояния задачи
     updateTaskState(taskId, newState) {
@@ -103,32 +110,6 @@ removeTaskFromList(listName, taskId) {
       }
     }
   
-    addOrMoveTask(taskId, fromState, toState, task) {
-      if (this.taskLists[toState].length < this.maxTasksCount) {
-        if (fromState !== toState) {
-          const taskToMoveIndex = this.taskLists[fromState].findIndex(task => task.id === taskId);
-          if (taskToMoveIndex !== -1) {
-            const taskToMove = this.taskLists[fromState][taskToMoveIndex];
-            taskToMove.state = toState;
-            this.taskLists[toState].push(taskToMove);
-            this.taskLists[fromState].splice(taskToMoveIndex, 1); // Удаляем задачу из fromState
-            this.saveTasksToStorage(); // Сохраняем изменения в локальном хранилище
-          }
-        } else {
-          if (this.taskLists[listName].length < this.maxTasksCount) {
-            task.id = this.generateTaskId();
-            this.taskLists[listName].push(task);
-            this.saveTasksToStorage();
-          } else {
-            alert('Максимальное количество задач достигнуто.');
-          }
-        }
-      } else {
-        alert('Максимальное количество задач достигнуто.');
-      }
-    }
-    
-
    
 findTaskById(taskId, state) {
   return this.taskLists[state].find(task => task.id === taskId);
@@ -146,74 +127,74 @@ findTaskById(taskId, state) {
 
 
 
-writeBacklog(taskText) {
-  const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
-  const task = { id: taskId, text: taskText }; // Создаем объект задачи
-  this.addTaskToList('backlog', task);
-  this.addOrMoveTask(taskId, 'backlog', 'ready', task); 
-  this.saveTasksToStorage();
-let readyItemCandidates = document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker');
-let readyItemCandidateNewOpt = document.createElement('option');
-readyItemCandidateNewOpt.textContent = taskText;
-readyItemCandidates.appendChild(readyItemCandidateNewOpt);
-document.querySelector('.app-container-ready > .append-button').disabled = false;
-redrawSelect('.app-ready-items');
-
-}
-
-
-
-writeReady(taskText) {
-  const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
-  const task = { id: taskId, text: taskText }; // Создаем объект задачи
-
-
-  this.addOrMoveTask(taskId, 'ready', 'inProgress', task); 
-
-  // Обновляем элементы интерфейса
-  let inProgressItemCandidates = document.querySelector('.app-progress-items > .app-select__list > .app-selection-marker');
-  let inProgressItemCandidateNewOpt = document.createElement('option');
-  inProgressItemCandidateNewOpt.textContent = taskText;
-  inProgressItemCandidates.appendChild(inProgressItemCandidateNewOpt);
-  document.querySelector('.app-container-progress > .append-button').disabled = false;
-  redrawSelect('.app-ready-items');
-  redrawSelect('.app-progress-items');
-}
-
- // Метод для добавления задачи в список "inProgress"
-writeInProgress(taskText) {
-  const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
-  const task = { id: taskId, text: taskText }; // Создаем объект задачи
-
-   // Перемещаем задачу из "backlog" в "ready"
-   this.addOrMoveTask(taskId, 'inProgress', 'finished', task); 
-
-  // Обновляем элементы интерфейса
-  let inProgressItemCandidates = document.querySelector('.app-finished-items > .app-select__list > .app-selection-marker');
-  let inProgressItemCandidateNewOpt = document.createElement('option');
-  inProgressItemCandidateNewOpt.textContent = taskText;
-  inProgressItemCandidates.appendChild(inProgressItemCandidateNewOpt);
-  document.querySelector('.app-container-finished > .append-button').disabled = false;
-  redrawSelect('.app-progress-items');
-  redrawSelect('.app-finished-items');
-
-}
-
-// Метод для добавления задачи в список "finished"
- writeFinished(taskText) {
-  const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
-  const task = { id: taskId, text: taskText }; // Создаем объект задачи
-
-  // Добавляем задачу в "finished"
-  this.addTaskToList('finished', task);
-
-
-
-  document.querySelector('.app-container-finished> .append-button').disabled = false;
-  redrawSelect('.app-finished-items');
- 
-}
-
+  writeBacklog(taskText) {
+    const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
+    const task = { id: taskId, text: taskText }; // Создаем объект задачи
+  
+    // Создаем массив с задачей для удаления
+    const tasksToRemove = [taskId];
+  
+    // Удаляем задачи из предыдущего состояния (если есть)
+    this.localStorageManager.removeTasksFromStorage(this.userid, tasksToRemove);
+  
+    // Добавляем задачу в "backlog"
+    this.addTaskToList('backlog', task);
+  
+    // Обновляем элементы интерфейса
+    let readyItemCandidates = document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker');
+    let readyItemCandidateNewOpt = document.createElement('option');
+    readyItemCandidateNewOpt.textContent = taskText;
+    readyItemCandidates.appendChild(readyItemCandidateNewOpt);
+    document.querySelector('.app-container-ready > .append-button').disabled = false;
+    redrawSelect('.app-ready-items');
+  }
+  
+  
+  
+  writeBacklog(taskText) {
+    const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
+    const task = { id: taskId, text: taskText }; // Создаем объект задачи
+  
+    // Создаем массив с задачей для удаления
+    const tasksToRemove = [taskId];
+  console.log(tasksToRemove,task)
+    // Удаляем задачи из предыдущего состояния (если есть)
+    this.localStorageManager.removeTasksFromStorage(this.userid, tasksToRemove);
+    this.localStorageManager.removeTasksFromStorage(this.userid, tasksToRemove);
+    // Добавляем задачу в "backlog"
+    this.addTaskToList('backlog', task);
+  
+    // Обновляем элементы интерфейса
+    let readyItemCandidates = document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker');
+    let readyItemCandidateNewOpt = document.createElement('option');
+    readyItemCandidateNewOpt.textContent = taskText;
+    readyItemCandidates.appendChild(readyItemCandidateNewOpt);
+    document.querySelector('.app-container-ready > .append-button').disabled = false;
+    redrawSelect('.app-ready-items');
+  }
+  
+  
+  
+  writeInProgress(taskText, taskId) {
+    const task = { id: taskId, text: taskText }; // Создаем объект задачи
+  
+    // Перед добавлением задачи в "inProgress", удаляем её из предыдущего состояния (если есть)
+    this.removeTaskFromStorage(taskId);
+  
+    // Перемещаем задачу из "backlog" в "ready"
+    this.moveTask(taskId, 'inProgress', 'finished');
+    // this.addTaskToList('inProgress', task);
+  
+    // Обновляем элементы интерфейса
+    let inProgressItemCandidates = document.querySelector('.app-finished-items > .app-select__list > .app-selection-marker');
+    let inProgressItemCandidateNewOpt = document.createElement('option');
+    inProgressItemCandidateNewOpt.textContent = taskText;
+    inProgressItemCandidates.appendChild(inProgressItemCandidateNewOpt);
+    document.querySelector('.app-container-finished > .append-button').disabled = false;
+    redrawSelect('.app-progress-items');
+    redrawSelect('.app-finished-items');
+  }
+  
 
   // Метод для удаления задачи из списка "backlog"
   removeFromBacklog(taskId) {
