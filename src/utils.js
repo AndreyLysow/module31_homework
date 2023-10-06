@@ -207,3 +207,4 @@ export function countTasks() {
   finishedTasksCounter.textContent = currentFinishedTasks;
 }
 
+

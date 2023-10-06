@@ -101,6 +101,7 @@ writeBacklog(taskText) {
   const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
   const task = { id: taskId, text: taskText }; // Создаем объект задачи
   this.addTaskToList('backlog', task);
+  this.moveTask(taskId, 'backlog', 'ready');
 let readyItemCandidates = document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker');
 let readyItemCandidateNewOpt = document.createElement('option');
 readyItemCandidateNewOpt.textContent = taskText;
@@ -116,7 +117,7 @@ writeReady(taskText) {
   const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
   const task = { id: taskId, text: taskText }; // Создаем объект задачи
   this.addTaskToList('ready', task);
-  
+  this.moveTask(taskId, 'ready', 'inProgress');
   // Обновляем элементы интерфейса
   let inProgressItemCandidates = document.querySelector('.app-progress-items > .app-select__list > .app-selection-marker');
   let inProgressItemCandidateNewOpt = document.createElement('option');
@@ -132,7 +133,7 @@ writeInProgress(taskText) {
   const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
   const task = { id: taskId, text: taskText };
   this.addTaskToList('inProgress', task);
- 
+  this.moveTask(taskId, 'inProgress', 'finished');
   // Обновляем элементы интерфейса
   let inProgressItemCandidates = document.querySelector('.app-finished-items > .app-select__list > .app-selection-marker');
   let inProgressItemCandidateNewOpt = document.createElement('option');

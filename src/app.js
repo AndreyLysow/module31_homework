@@ -178,7 +178,7 @@ function addNewBacklogTask(sbmt, btn, backlogList, taskInputField, myTasks) {
   myTasks.writeBacklog(taskInputField.value);
   taskInputField.value = '';
   taskInputField.style.display = 'none';
-  myTasks.saveTasksToStorage();
+  saveBoardState(myTasks);
   btn.focus();
 
 }
@@ -229,7 +229,7 @@ function addNewReadyTask(sbmt, btn, readyList, myTasks) {
   delLiWithContent(selectMarker, newReadyTaskText);
   delOptionWithContent(selectMarker, newReadyTaskText);
   countTasks();
-  myTasks.saveTasksToStorage();
+  saveBoardState(myTasks);
 }
 
 function startNewReadyTask(btn, sbmt) {
@@ -285,7 +285,7 @@ inProgressList.insertBefore(newTaskElement, inProgressList.lastElementChild);
   delLiWithContent(selectMarker, newInProgressTaskText);
   delOptionWithContent(selectMarker, newInProgressTaskText);
   selectedTask.remove();
-  myTasks.saveTasksToStorage();
+  saveBoardState(myTasks);
   countTasks();
 }
 
@@ -339,7 +339,7 @@ finishedList.insertBefore(newTaskElement, finishedList.lastElementChild);
   delLiWithContent(selectMarker, newFinishedTaskText);
   delOptionWithContent(selectMarker, newFinishedTaskText);
   selectedTask.remove();
-  myTasks.saveTasksToStorage();
+  saveBoardState(myTasks);
   countTasks();
 }
 
@@ -372,6 +372,7 @@ function loadAllTasksFromStorage(myTasks) {
     console.log('Перетаскивание задачи завершено.');
     toList = e.target.parentNode.classList[0].replace("app-list__", "");
     myTasks.moveTask(e.target.id, fromList, toList);
+    saveBoardState(myTasks);
   }
 
 
@@ -440,3 +441,25 @@ function createTaskElement(taskText) {
 }
 
 
+// доп функция для соранения состояния доски
+function saveBoardState(myTasks) {
+  const boardState = {}; // Объект для хранения состояния доски
+
+  // Пройдемся по всем спискам задач (backlog, ready, inProgress, finished)
+  const taskFields = ['backlog', 'ready', 'inProgress', 'finished'];
+  taskFields.forEach((field) => {
+    const tasks = myTasks.getTasksFromList(field);
+
+    // Для каждого списка создадим массив с информацией о задачах
+    boardState[field] = tasks.map((task) => {
+      return {
+        id: task.id,
+        text: task.text,
+        state: field, // Сохраняем состояние задачи
+      };
+    });
+  });
+
+  // Сохраняем объект с состоянием доски в localStorage
+  localStorage.setItem('boardState', JSON.stringify(boardState));
+}

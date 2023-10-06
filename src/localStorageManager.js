@@ -20,10 +20,19 @@ export class LocalStorageManager {
     }
   }
 
-  // Метод для удаления задач пользователя из localStorage
-  removeTasksFromStorage(userid) {
-    if (userid) {
-      localStorage.removeItem(userid);
-    }
+
+ // Метод для удаления задач пользователя из localStorage
+removeTasksFromStorage(userid) {
+  if (userid) {
+    // Получаем все ключи из localStorage
+    const keys = Object.keys(localStorage);
+
+    // Фильтруем ключи, чтобы оставить только те, которые начинаются с userid
+    const userKeys = keys.filter(key => key.startsWith(userid));
+
+    // Удаляем задачи пользователя из localStorage
+    userKeys.forEach(key => localStorage.removeItem(key));
   }
+}
+
 }
