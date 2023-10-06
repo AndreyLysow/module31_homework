@@ -178,7 +178,9 @@ function addNewBacklogTask(sbmt, btn, backlogList, taskInputField, myTasks) {
   myTasks.writeBacklog(taskInputField.value);
   taskInputField.value = '';
   taskInputField.style.display = 'none';
+  myTasks.saveTasksToStorage();
   btn.focus();
+
 }
 
 function startNewBacklogTask(btn, sbmt, taskInputField) {
@@ -227,6 +229,7 @@ function addNewReadyTask(sbmt, btn, readyList, myTasks) {
   delLiWithContent(selectMarker, newReadyTaskText);
   delOptionWithContent(selectMarker, newReadyTaskText);
   countTasks();
+  myTasks.saveTasksToStorage();
 }
 
 function startNewReadyTask(btn, sbmt) {
@@ -281,8 +284,8 @@ inProgressList.insertBefore(newTaskElement, inProgressList.lastElementChild);
 
   delLiWithContent(selectMarker, newInProgressTaskText);
   delOptionWithContent(selectMarker, newInProgressTaskText);
-
   selectedTask.remove();
+  myTasks.saveTasksToStorage();
   countTasks();
 }
 
@@ -336,8 +339,8 @@ finishedList.insertBefore(newTaskElement, finishedList.lastElementChild);
   delLiWithContent(selectMarker, newFinishedTaskText);
   delOptionWithContent(selectMarker, newFinishedTaskText);
   selectedTask.remove();
+  myTasks.saveTasksToStorage();
   countTasks();
-  // myTasks.saveTasksToStorage();
 }
 
 

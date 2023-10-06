@@ -14,7 +14,7 @@ export class Tasks {
     };
 
     this.loadTasksFromStorage();
-
+    this.saveTasksToStorage();
        // Добавляем обработчик события перед выходом из сессии
        window.addEventListener('beforeunload', () => {
         this.saveTasksToStorage();
@@ -157,11 +157,8 @@ findTaskById(taskId, state) {
   
     // Создаем массив с задачей для удаления
     const tasksToRemove = [taskId];
-  console.log(tasksToRemove,task)
-    // Удаляем задачи из предыдущего состояния (если есть)
-    this.localStorageManager.removeTasksFromStorage(this.userid, tasksToRemove);
-    this.localStorageManager.removeTasksFromStorage(this.userid, tasksToRemove);
-    // Добавляем задачу в "backlog"
+     console.log(tasksToRemove,task)
+  
     this.addTaskToList('backlog', task);
   
     // Обновляем элементы интерфейса

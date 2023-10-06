@@ -77,7 +77,7 @@ export function delOptionWithContent(searchRoot, textcontent) {
 
 //Обработчик кнопки "Logout": попытка сделать глубокий релоад гугл хром
 
-export function logOutBtn() {
+export function logOutBtn(myTasks) {
   const logoutForm = document.querySelector("#app-logout-btn");
   if (logoutForm) {
     logoutForm.addEventListener("click", function () {
@@ -92,6 +92,7 @@ export function logOutBtn() {
             if( !src)continue;
             fetch( src, { cache: "reload"});
         }
+       
         return document.location.reload( true);
     };
     window.forceReload()
@@ -99,6 +100,8 @@ export function logOutBtn() {
     });
   }
 }
+
+
 
 export function adminUserBtn() {
   const adminButton = document.getElementById("app-User-Management");

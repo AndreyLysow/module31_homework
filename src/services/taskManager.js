@@ -14,13 +14,13 @@ export class Tasks {
     };
 
     this.loadTasksFromStorage();
-
-       // Добавляем обработчик события перед выходом из сессии
-       window.addEventListener('beforeunload', () => {
-        this.saveTasksToStorage();
-        // Добавляем всплывающее окно, чтобы сделать событие синхронным и предупредить пользователя
-        alert('Задачи будут сохранены перед выходом.');
-      });
+    this.saveTasksToStorage();
+  //      // Добавляем обработчик события перед выходом из сессии
+  //      window.addEventListener('beforeunload', () => {
+  //       this.saveTasksToStorage();
+  //       // Добавляем всплывающее окно, чтобы сделать событие синхронным и предупредить пользователя
+  //       alert('Задачи будут сохранены перед выходом.');
+  //     });
   }
   loadTasksFromStorage() {
     const tasks = this.localStorageManager.getTasksFromStorage(this.userid);
@@ -29,45 +29,13 @@ export class Tasks {
     }
   }
 
-
-
- // Генерация уникального ID для задачи
- generateTaskId() {
-  const timestamp = new Date().getTime(); // Получаем текущую временную метку
-  const random = Math.random().toString(36).substring(2, 15); // Генерируем случайную строку
-  return `${timestamp}-${random}`; // Соединяем временную метку и случайную строку
-}
-
-
-   // Добавление задачи
-   addTaskToList(listName, task) {
-    if (this.taskLists[listName].length < this.maxTasksCount) {
-      task.id = this.generateTaskId();
-      this.taskLists[listName].push(task);
-      this.saveTasksToStorage();
-    } else {
-      alert('Максимальное количество задач достигнуто.');
-    }
-  }
-
- 
-
 // Сохранение задач в localStorage
 saveTasksToStorage() {
 
   this.localStorageManager.removeTasksFromStorage(this.userid);
   this.localStorageManager.saveTasksToStorage(this.userid, this.taskLists);
+
 }
-
-
-
-loadTasksFromStorage() {
-  const tasks = this.localStorageManager.getTasksFromStorage(this.userid);
-  if (tasks) {
-    this.taskLists = tasks;
-  }
-}
-
 
 removeTaskFromList(listName, taskId) {
   const index = this.taskLists[listName].findIndex(task => task.id === taskId);
@@ -83,6 +51,14 @@ removeTaskFromList(listName, taskId) {
 // }
 
 
+
+ // Генерация уникального ID для задачи
+ generateTaskId() {
+  const timestamp = new Date().getTime(); // Получаем текущую временную метку
+  const random = Math.random().toString(36).substring(2, 15); // Генерируем случайную строку
+  return `${timestamp}-${random}`; // Соединяем временную метку и случайную строку
+}
+
   // Перемещение задачи между состояниями (например, из backlog в ready)
   moveTask(taskId, fromState, toState) {
     const taskToMove = this.findTaskById(taskId, fromState);
@@ -94,42 +70,17 @@ removeTaskFromList(listName, taskId) {
     }
   }
 
-    // Обновление состояния задачи
-    updateTaskState(taskId, newState) {
-      const taskToUpdate = this.findTaskById(taskId);
-      if (taskToUpdate) {
-        taskToUpdate.state = newState;
-        this.saveTasksToStorage();
-      }
+   // Добавление задачи
+   addTaskToList(listName, task) {
+    if (this.taskLists[listName].length < this.maxTasksCount) {
+      this.taskLists[listName].push(task);
+      this.saveTasksToStorage();
+    } else {
+      alert('Максимальное количество задач достигнуто.');
     }
-  
-    addOrMoveTask(taskId, fromState, toState, task) {
-      if (this.taskLists[toState].length < this.maxTasksCount) {
-        if (fromState !== toState) {
-          const taskToMoveIndex = this.taskLists[fromState].findIndex(task => task.id === taskId);
-          if (taskToMoveIndex !== -1) {
-            const taskToMove = this.taskLists[fromState][taskToMoveIndex];
-            taskToMove.state = toState;
-            this.taskLists[toState].push(taskToMove);
-            this.taskLists[fromState].splice(taskToMoveIndex, 1); // Удаляем задачу из fromState
-            this.saveTasksToStorage(); // Сохраняем изменения в локальном хранилище
-          }
-        } else {
-          if (this.taskLists[listName].length < this.maxTasksCount) {
-            task.id = this.generateTaskId();
-            this.taskLists[listName].push(task);
-            this.saveTasksToStorage();
-          } else {
-            alert('Максимальное количество задач достигнуто.');
-          }
-        }
-      } else {
-        alert('Максимальное количество задач достигнуто.');
-      }
-    }
-    
+  }
 
-   
+
 findTaskById(taskId, state) {
   return this.taskLists[state].find(task => task.id === taskId);
 }
@@ -150,8 +101,6 @@ writeBacklog(taskText) {
   const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
   const task = { id: taskId, text: taskText }; // Создаем объект задачи
   this.addTaskToList('backlog', task);
-  this.addOrMoveTask(taskId, 'backlog', 'ready', task); 
-  this.saveTasksToStorage();
 let readyItemCandidates = document.querySelector('.app-ready-items > .app-select__list > .app-selection-marker');
 let readyItemCandidateNewOpt = document.createElement('option');
 readyItemCandidateNewOpt.textContent = taskText;
@@ -166,10 +115,8 @@ redrawSelect('.app-ready-items');
 writeReady(taskText) {
   const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
   const task = { id: taskId, text: taskText }; // Создаем объект задачи
-
-
-  this.addOrMoveTask(taskId, 'ready', 'inProgress', task); 
-
+  this.addTaskToList('ready', task);
+  
   // Обновляем элементы интерфейса
   let inProgressItemCandidates = document.querySelector('.app-progress-items > .app-select__list > .app-selection-marker');
   let inProgressItemCandidateNewOpt = document.createElement('option');
@@ -183,11 +130,9 @@ writeReady(taskText) {
  // Метод для добавления задачи в список "inProgress"
 writeInProgress(taskText) {
   const taskId = this.generateTaskId(); // Генерируем уникальный ID для задачи
-  const task = { id: taskId, text: taskText }; // Создаем объект задачи
-
-   // Перемещаем задачу из "backlog" в "ready"
-   this.addOrMoveTask(taskId, 'inProgress', 'finished', task); 
-
+  const task = { id: taskId, text: taskText };
+  this.addTaskToList('inProgress', task);
+ 
   // Обновляем элементы интерфейса
   let inProgressItemCandidates = document.querySelector('.app-finished-items > .app-select__list > .app-selection-marker');
   let inProgressItemCandidateNewOpt = document.createElement('option');
@@ -207,11 +152,9 @@ writeInProgress(taskText) {
   // Добавляем задачу в "finished"
   this.addTaskToList('finished', task);
 
-
-
   document.querySelector('.app-container-finished> .append-button').disabled = false;
   redrawSelect('.app-finished-items');
- 
+
 }
 
 
